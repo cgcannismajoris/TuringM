@@ -1,8 +1,9 @@
 /*
- * Nome do Arquivo:  stateTransition.h
- *       Descricao:  Implementação do gerenciador da tabela de transições.
- *
- * Exported functions from stateTransition.c.
+ * Nome do Arquivo:  stateTransition.c
+ *       Descricao:  Implementação do TAD responsável por armazenar as transições de
+ *       um estado.
+ * 
+ * Machine for TuringM.
  * Copyright (C) 2015  Cristian Costa Mello and Gustavo Freitas de Amorim
  *
  * This is part of TuringM
@@ -20,27 +21,4 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STATE_TRANSITION_HEADER
-#define STATE_TRANSITION_HEADER
-
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "../../trgError.h"
-
-#include "../../../linkedList/linkedList.h"
-#include "../../decoder/scanner/tokens/tokens.h"
-
-#define STATE_TRANSITION_ERROR               NULL
-#define STATE_TRANSITION_ERROR_MSG           "Falha ao alocar memória para TRANSITIONTABLE."
-
-typedef struct _stateTransition{
-
-	TOKENS *transitions;
-	uint32_t qtdTransitions;
-
-} STATETRANSITION;
-
-
-#endif
+#include "transition.h"

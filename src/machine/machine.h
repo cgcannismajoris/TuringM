@@ -33,8 +33,8 @@
 #include "alphabet/alphabet.h"
 #include "transitionTable/transitionTable.h"
 
-#define MACHINE_ERROR               NULL
-#define MACHINE_ERROR_MSG           "Falha ao alocar memória para MACHINE."
+#define MACHINE_EALLOC               NULL
+#define MACHINE_EALLOC_MSG           "Falha ao alocar memória para MACHINE."
 
 typedef struct _machine{
 	

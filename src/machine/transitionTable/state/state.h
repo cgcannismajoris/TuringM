@@ -28,11 +28,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../trgError.h"
+#include "../../../trgError.h"
 
-#include "stateTransition/stateTransition.h"
-#include "../../linkedList/linkedList.h"
-#include "../../decoder/scanner/tokens/tokens.h"
+#include "transition/transition.h"
+#include "../../../linkedList/linkedList.h"
+#include "../../../decoder/scanner/tokens/tokens.h"
 
 #define STATE_ERROR               NULL
 #define STATE_ERROR_MSG           "Falha ao alocar memória para TRANSITIONTABLE."

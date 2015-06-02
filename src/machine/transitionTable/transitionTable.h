@@ -39,7 +39,7 @@
 
 typedef struct _transitionTable{
 	
-	LIST *transitions; //Conteúdo do tipo STATETRANSITION
+	LIST *transitions; //Conteúdo do tipo STATE
 
 } TRANSITIONTABLE;
 

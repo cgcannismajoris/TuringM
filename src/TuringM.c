@@ -20,4 +20,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "TuringM.h"
+#include <stdio.h>
+int turing_run(char *file){
+
+	printf("rélou uoludi!\n");
+	
+
+}
 

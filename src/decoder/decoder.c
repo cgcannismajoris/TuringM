@@ -20,3 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "decoder.h"
+
+
+int decoder_decode(char *filename){
+	return (0);
+}

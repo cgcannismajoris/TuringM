@@ -20,3 +20,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+#ifndef DECODER_HEADER
+#define DECODER_HEADER
+
+
+int decoder_decode(char *filename);
+
+#endif

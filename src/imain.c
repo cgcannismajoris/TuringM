@@ -25,6 +25,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "TuringM.h"
+
 int main (int argc, char *argv[]){ 
 
 	//Se a quantidade de argumentos for insuficiente...
@@ -47,6 +49,8 @@ texto codificado no padrão ANSI ASCII;\n\n");
 para mais informações.\n");
 		return (EXIT_FAILURE);
 	}
+
+	turing_run(argv[1]);	
 
 	return EXIT_SUCCESS;
 }

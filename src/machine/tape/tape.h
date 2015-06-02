@@ -32,6 +32,10 @@
 
 #include "../../linkedList/linkedList.h"
 
+#define TAPE_EALLOC               NULL
+#define TAPE_EALLOC_MSG           "Falha ao alocar memória para TAPE."
+
+
 typedef struct _tape{
 	
 	LIST *tape;
@@ -52,5 +56,8 @@ NODE *tape_moveLeft(TAPE *tape);
 
 NODE *tape_getActual(TAPE *tape);
 
+char tape_read(TAPE *tape);
+
+void tape_write(TAPE *tape, char chr);
 
 #endif
