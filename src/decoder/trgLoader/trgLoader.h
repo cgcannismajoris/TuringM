@@ -34,7 +34,7 @@
 #define TRGLOADER_EGETINST      NULL    /* Falha ao se obter nova instrução */
 
 #define TRGLOADER_EALLOC_MSG    "Falha na alocação da estrutura TRGLOADER."
-#define TRGLOADER_EGETINST_MSG  "Falha ao se obter nova instrução."
+#define TRGLOADER_EGETINST_MSG  "Falha ao se obter nova linha."
 
 #define TRGLOADER_EFOPEN_MSG    "Falha na abertura do arquivo de código-fonte."
 
@@ -75,9 +75,9 @@ TRGLOADER *     trgLoader_new(const char *filename);
 void            trgLoader_free(TRGLOADER *trgLoader);
 
 
-/* -> void trgLoader_getNextLine(TRGLOADER *trgLoader)
+/* -> void trgLoader_getLine(TRGLOADER *trgLoader)
  * 
- * - DESCRIÇÃO: Carrega a próxima liha escrita do arquivo.
+ * - DESCRIÇÃO: Carrega a próxima linha escrita do arquivo.
  *   	- Se nenhuma linha foi lida até o momento, carrega a primeira.
  *   	- Se já leu alguma, carrega a linha subsequênte à anteriormente carregada.
  *
@@ -89,7 +89,7 @@ void            trgLoader_free(TRGLOADER *trgLoader);
  *   	-> Se NULL    - Erro na operação.
  *   	-> Se != NULL - Sucesso na operação.
  */
-char *         trgLoader_getNextLine(TRGLOADER *trgLoader);
+char *         trgLoader_getLine(TRGLOADER *trgLoader);
 
 
 /* -> void trgLoader_rewind(TRGLOADER *trgLoader)

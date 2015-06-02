@@ -23,6 +23,12 @@
 #ifndef TURINGM_HEADER
 #define TURINGM_HEADER
 
+#include "decoder/decoder.h"
+
+#define TURINGM_DECODER_ERROR	-1
+#define TURINGM_DECODER_ERROR_MSG	"TURINGM: Falha ao decodificar arquivo de entrada."
+
+
 int turing_run(char *file);
 
 #endif

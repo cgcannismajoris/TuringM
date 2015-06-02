@@ -162,4 +162,10 @@ int 		token_verifCommon(TOKENS *one, TOKENS *two);
  */
 int			token_verifRepetitions(TOKENS *one);
 
+char 		*token_toStringWithSeparator(TOKENS *token, char *separator);
+
+char 		*token_toStringWithoutSeparator(TOKENS *token);
+
+char		*token_toString(TOKENS *token);
+
 #endif /* TOKENS_HEADER */

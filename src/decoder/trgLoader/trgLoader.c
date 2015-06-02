@@ -58,7 +58,7 @@ void trgLoader_free(TRGLOADER *trgLoader)
     free(trgLoader);
 }
 
-char *trgLoader_getNextLine(TRGLOADER *trgLoader)
+char *trgLoader_getLine(TRGLOADER *trgLoader)
 {
     if (feof(trgLoader->file))
         return NULL;

@@ -22,3 +22,64 @@
  */
 
 #include "state.h"
+
+STATE *state_new(char *name, int type){
+	
+	STATE *novo = NULL;
+	
+	if((novo = (STATE*)malloc(sizeof(STATE))) == NULL){
+		trgError_setDesc(STATE_EALLOC_MSG);
+		return (NULL);
+	}
+	
+	if((novo->transitions = lista_new()) == NULL){
+
+		free(novo);
+		trgError_setDesc(STATE_EALLOC_MSG);
+	
+		return (NULL);
+	}
+
+	if((novo->name = (char*)malloc(strlen(name) + 1)) == NULL){
+
+		free(novo);
+		trgError_setDesc(STATE_EALLOC_MSG);
+	
+		return (NULL);
+	}
+	
+	strcpy(novo->name, name);
+	novo->type = type;
+
+	return (novo);
+}
+
+void state_free(STATE *state){
+	lista_free(state->transitions);
+	free(state->name);
+	free(state);
+}
+
+void state_addTransition(STATE *state, TRANSITION *transition){
+	NODE *no = lista_node_new(transition);
+	lista_insertLastNode(state->transitions, no);
+}
+
+char *state_getName(STATE *state){
+	return (state->name);
+}
+
+int state_getType(STATE *state){
+	return (state->type);
+}
+
+TRANSITION *state_getTransition(STATE *state, char readedChar){
+	NODE *no = lista_search(state->transitions, &readedChar, transition_cmpReadChar);
+
+	if(no != NULL)
+		return (node_getData(no));
+
+	return (NULL);
+}
+
+

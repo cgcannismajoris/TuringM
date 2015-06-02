@@ -24,8 +24,17 @@
 #include <stdio.h>
 int turing_run(char *file){
 
-	printf("rélou uoludi!\n");
-	
+	MACHINE *machine = NULL;
 
+	//Se ocorrer erro no processamento
+	if((machine = decoder_decode(file)) == NULL){
+		printf(TURINGM_DECODER_ERROR_MSG);
+		printf("\n");
+		return (TURINGM_DECODER_ERROR);
+	}
+	
+	//Chama machine_run e verifica o retorno
+
+	return (0);
 }
 

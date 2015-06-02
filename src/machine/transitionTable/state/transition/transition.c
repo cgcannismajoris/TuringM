@@ -22,3 +22,73 @@
  */
 
 #include "transition.h"
+
+TRANSITION *transition_new(char *actualState, char readChar, char *nextState,
+							char writeChar, char move){
+	
+	TRANSITION *novo = NULL;
+
+	if((novo = (TRANSITION*)malloc(sizeof(TRANSITION))) == NULL){
+		trgError_setDesc(TRANSITION_EALLOC_MSG);
+		return (NULL);
+	}
+
+	if((novo->actualState = (char*)malloc(strlen(actualState) + 1)) == NULL){
+
+		free(novo);
+
+		trgError_setDesc(TRANSITION_EALLOC_MSG);
+		return (NULL);
+	}
+
+	if((novo->nextState = (char*)malloc(strlen(nextState) + 1)) == NULL){
+
+		free(novo->actualState);
+		free(novo);
+
+		trgError_setDesc(TRANSITION_EALLOC_MSG);
+		return (NULL);
+	}
+
+	novo->move = move;
+	novo->readChar = readChar;
+	novo->writeChar = writeChar;
+
+	strcpy(novo->actualState, actualState);
+	strcpy(novo->nextState, nextState);
+
+	return (novo);
+}
+
+void transition_free(TRANSITION *transition){
+	
+	free(transition->actualState);
+	free(transition->nextState);
+	free(transition);
+
+}
+
+char *transition_getActualState(TRANSITION *transition){
+	return (transition->actualState);
+}
+
+char transition_getReadChar(TRANSITION *transition){
+	return (transition->readChar);
+}
+
+char *transition_getNextState(TRANSITION *transition){
+	return (transition->nextState);
+}
+
+char transition_getWriteChar(TRANSITION *transition){
+	return (transition->writeChar);
+}
+
+char transition_getMove(TRANSITION *transition){
+	return (transition->move);
+}
+
+int transition_cmpReadChar(const void *transition, const void *chr){
+	return (*((char*)chr) - (((TRANSITION*)transition)->readChar)); 
+}
+

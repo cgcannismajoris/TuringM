@@ -34,8 +34,8 @@
 #include "../../../linkedList/linkedList.h"
 #include "../../../decoder/scanner/tokens/tokens.h"
 
-#define STATE_ERROR               NULL
-#define STATE_ERROR_MSG           "Falha ao alocar memória para TRANSITIONTABLE."
+#define STATE_EALLOC               NULL
+#define STATE_EALLOC_MSG           "Falha ao alocar memória para STATE."
 
 #define STATE_TYPE_START 			1
 #define STATE_TYPE_FINAL 			2
@@ -47,8 +47,21 @@ typedef struct _state{
 
 	int type;
 
-	STATETRANSITION *transitions;
-	
+	LIST *transitions;
+
 } STATE;
+
+STATE *state_new(char *name, int type);
+
+void state_free(STATE *state);
+
+void state_addTransition(STATE *state, TRANSITION *transition);
+
+char *state_getName(STATE *state);
+
+int state_getType(STATE *state);
+
+TRANSITION *state_getTransition(STATE *state, char readedChar);
+
 
 #endif

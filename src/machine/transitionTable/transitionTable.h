@@ -30,17 +30,28 @@
 
 #include "../../trgError.h"
 
+#include "state/state.h"
 #include "../../linkedList/linkedList.h"
 #include "../../decoder/scanner/tokens/tokens.h"
 
-#define TRANSITION_TABLE_ERROR               NULL
-#define TRANSITION_TABLE_ERROR_MSG           "Falha ao alocar memória para TRANSITIONTABLE."
+#define TABLE_ERROR               NULL
+#define TABLE_ERROR_MSG           "Falha ao alocar memória para TRANSITIONTABLE."
 
 
 typedef struct _transitionTable{
 	
 	LIST *transitions; //Conteúdo do tipo STATE
 
-} TRANSITIONTABLE;
+} TRANSITIONTABLE, TABLE;
+
+TABLE *table_new();
+
+void table_free(TABLE *table);
+
+void table_addState(TABLE *table, STATE *state);
+
+void table_addTransition(TABLE *table, TRANSITION *transition);
+
+TRANSITION *getTransition(TABLE *table, char *actualState, char readedChar);
 
 #endif

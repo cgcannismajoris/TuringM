@@ -22,7 +22,47 @@
 
 #include "decoder.h"
 
+#include <stdio.h>
+MACHINE *decoder_decode(char *filename){
 
-int decoder_decode(char *filename){
-	return (0);
+	char *line = NULL;
+	char *tmpStr;
+
+	TRGLOADER *loader = NULL;
+
+	TOKENS *token;
+	
+	ALPHABET *inputAlphabet;
+	ALPHABET *outputAlphabet;
+	TRANSITIONTABLE *table;
+	char whiteChar;
+
+	if((loader = trgLoader_new(filename)) == NULL){
+		printf(DECODER_FILE_ERROR_MSG);
+		printf("\n");
+		return (NULL);
+	}
+
+	//Gera o alfabeto de entrada
+	line = trgLoader_getLine(loader);
+	token = scanner_scan(line, NULL, " \t", 0);
+	tmpStr = token_toStringWithoutSeparator(token);
+	inputAlphabet = alphabet_new(tmpStr, strlen(tmpStr));
+	
+	token_free(token);
+	free(tmpStr);
+	
+	//Gera o alfabeto de saída
+	line = trgLoader_getLine(loader);
+	token = scanner_scan(line, NULL, " \t", 0);
+	tmpStr = token_toStringWithoutSeparator(token);
+	outputAlphabet = alphabet_new(tmpStr, strlen(tmpStr));
+
+	token_free(token);
+	free(tmpStr);
+
+	//Obtém o caractere branco e o estado inicial
+
+
+	return ((MACHINE*)loader);
 }

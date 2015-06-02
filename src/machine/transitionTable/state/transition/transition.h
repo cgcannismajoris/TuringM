@@ -1,6 +1,7 @@
 /*
  * Nome do Arquivo:  stateTransition.h
- *       Descricao:  Implementação do gerenciador da tabela de transições.
+ *       Descricao:  Implementação do TAD responsável por armazenar uma transição
+ *       de estados.
  *
  * Exported functions from stateTransition.c.
  * Copyright (C) 2015  Cristian Costa Mello and Gustavo Freitas de Amorim
@@ -32,15 +33,31 @@
 #include "../../../../linkedList/linkedList.h"
 #include "../../../../decoder/scanner/tokens/tokens.h"
 
-#define STATE_TRANSITION_ERROR               NULL
-#define STATE_TRANSITION_ERROR_MSG           "Falha ao alocar memória para TRANSITIONTABLE."
+#define TRANSITION_EALLOC		NULL
+#define TRANSITION_EALLOC_MSG	"Falha ao alocar memória para TRANSITIONTABLE."
 
 typedef struct _stateTransition{
 
-	TOKENS *transitions;
-	uint32_t qtdTransitions;
+	char *actualState;
+	char readChar;
+	char *nextState;
+	char writeChar;
+	char move;
 
-} STATETRANSITION;
+} STATETRANSITION, TRANSITION;
 
+TRANSITION *transition_new(char *actualState, char readChar, char *nextState,
+							char writeChar, char move);
 
+char *transition_getActualState(TRANSITION *transition);
+
+char transition_getReadChar(TRANSITION *transition);
+
+char *transition_getNextState(TRANSITION *transition);
+
+char transition_getWriteChar(TRANSITION *transition);
+
+char transition_getMove(TRANSITION *transition);
+
+int transition_cmpReadChar(const void *transition, const void *chr);
 #endif

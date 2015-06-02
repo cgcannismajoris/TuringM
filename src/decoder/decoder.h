@@ -24,7 +24,23 @@
 #ifndef DECODER_HEADER
 #define DECODER_HEADER
 
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 
-int decoder_decode(char *filename);
+#include "../trgError.h"
+
+#include "trgLoader/trgLoader.h"
+#include "scanner/scanner.h"
+
+#include "../machine/machine.h"
+
+#define DECODER_EALLOC		NULL
+#define DECODER_EALLOC_MSG	"Falha ao alocar memória para DECODER."
+
+#define DECODER_FILE_ERROR	-1
+#define DECODER_FILE_ERROR_MSG	"DECODER: Falha ao manipular arquivo."
+
+MACHINE *decoder_decode(char *filename);
 
 #endif

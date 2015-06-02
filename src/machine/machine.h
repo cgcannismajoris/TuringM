@@ -36,7 +36,7 @@
 #define MACHINE_EALLOC               NULL
 #define MACHINE_EALLOC_MSG           "Falha ao alocar memória para MACHINE."
 
-typedef struct _machine{
+typedef struct _machine {
 	
 	ALPHABET *inputAlphabet;
 	ALPHABET *outputAlphabet;

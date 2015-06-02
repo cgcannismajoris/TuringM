@@ -138,3 +138,129 @@ int token_verifRepetitions(TOKENS *one)
 	return (0);
 }
 
+char *token_toStringWithSeparator(TOKENS *token, char *separator){
+
+	uint64_t qtdChars = 2;
+	uint32_t i;
+
+	char *str = NULL;
+	char *tmp;
+
+	//Calcula a quantidade de caracteres a serem utilizados pelos separadores	
+	qtdChars += strlen(separator) * (token->qtdUsed - 1);
+
+	//Calcula a quantidade de caracteres a serem utilizados pelos tokens
+	for(i = 0; i < token->qtdUsed; i++){
+		qtdChars += strlen(token->tokens[i]);
+	}
+	
+	//Gera a string
+	if((str = (char*)malloc(sizeof(char) * qtdChars)) == NULL){
+		trgError_setDesc(TOKENS_EALLOC_MSG);
+		return (NULL);
+	}
+
+	tmp = str;
+	
+	memcpy(tmp, token->tokens[0], strlen(token->tokens[0]));
+
+	tmp += strlen(token->tokens[0]);
+
+	for(i = 1; i < token->qtdUsed; i++){
+
+		memcpy(tmp, separator, strlen(separator));
+
+		tmp += strlen(separator);
+
+		memcpy(tmp, token->tokens[i], strlen(token->tokens[i]));
+
+		tmp += strlen(token->tokens[i]);
+	}
+	
+	*tmp = '\0';
+
+	//Retorna
+	return (str);
+}
+
+char *token_toStringWithoutSeparator(TOKENS *token){
+	uint64_t qtdChars = 2;
+	uint32_t i;
+
+	char *str = NULL;
+	char *tmp;
+
+	//Calcula a quantidade de caracteres a serem utilizados pelos tokens
+	for(i = 0; i < token->qtdUsed; i++){
+		qtdChars += strlen(token->tokens[i]);
+	}
+	
+	//Gera a string
+	if((str = (char*)malloc(sizeof(char) * qtdChars)) == NULL){
+		trgError_setDesc(TOKENS_EALLOC_MSG);
+		return (NULL);
+	}
+
+	tmp = str;
+	
+	memcpy(tmp, token->tokens[0], strlen(token->tokens[0]));
+
+	tmp += strlen(token->tokens[0]);
+
+	for(i = 1; i < token->qtdUsed; i++){
+
+		memcpy(tmp, token->tokens[i], strlen(token->tokens[i]));
+		tmp += strlen(token->tokens[i]);
+	}
+	
+	*tmp = '\0';
+
+	//Retorna
+	return (str);
+
+}
+
+char *token_toString(TOKENS *token){
+	uint64_t qtdChars = 2;
+	uint32_t i;
+
+	char *str = NULL;
+	char *tmp;
+
+	//Calcula a quantidade de caracteres a serem utilizados pelos separadores	
+	qtdChars += (token->qtdUsed - 1);
+
+	//Calcula a quantidade de caracteres a serem utilizados pelos tokens
+	for(i = 0; i < token->qtdUsed; i++){
+		qtdChars += strlen(token->tokens[i]);
+	}
+	
+	//Gera a string
+	if((str = (char*)malloc(sizeof(char) * qtdChars)) == NULL){
+		trgError_setDesc(TOKENS_EALLOC_MSG);
+		return (NULL);
+	}
+
+	tmp = str;
+	
+	memcpy(tmp, token->tokens[0], strlen(token->tokens[0]));
+
+	tmp += strlen(token->tokens[0]);
+
+	for(i = 1; i < token->qtdUsed; i++){
+
+		*tmp = ' ';
+		tmp++;
+
+		memcpy(tmp, token->tokens[i], strlen(token->tokens[i]));
+
+		tmp += strlen(token->tokens[i]);
+	}
+	
+	*tmp = '\0';
+
+	//Retorna
+	return (str);
+
+}
+
