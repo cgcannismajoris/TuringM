@@ -27,7 +27,26 @@
 
 int main (int argc, char *argv[]){ 
 
-	printf("Ola mundo! =D\n");
+	//Se a quantidade de argumentos for insuficiente...
+	if(argc == 1)
+	{
+		printf("\nTuringM\n");
+		printf("Copyright (C) 2015 Cristian Costa Mello and Gustavo \
+Freitas de Amorim\n\n");
+		printf("Linha de Comando:\n");
+		printf("TuringM <NOME_DO_ARQUIVO_DE_ENTRADA>\n\n");
+		printf("Descrição dos Argumentos:\n");
+		printf("   <NOME_DO_ARQUIVO_DE_ENTRADA> : é um arquivo de \
+texto codificado no padrão ANSI ASCII;\n\n");
+		return (EXIT_SUCCESS);
+	}
+	//Se a quantidade de argumentos excede o limite...
+	else if(argc != 2)
+	{
+		printf("Linha de comando inválida. Invoque o programa sem argumentos \
+para mais informações.\n");
+		return (EXIT_FAILURE);
+	}
 
 	return EXIT_SUCCESS;
 }

@@ -29,35 +29,40 @@
 # DEFINIÇÕES DE ARQUIVOS #####################
 # Arquivos de código-fonte
 IMAIN_SRC		= src/imain.c
-TOKENS_SRC		= src/scanner/tokens/tokens.c
-SCANNER_SRC		= src/scanner/scanner.c
+DECODER_SRC		= src/decoder/decoder.c
+TOKENS_SRC		= src/decoder/scanner/tokens/tokens.c
+SCANNER_SRC		= src/decoder/scanner/scanner.c
 LINKEDL_SRC     = src/linkedList/linkedList.c
 GNODE_SRC       = src/linkedList/node.c
 GDMANIP_SRC     = src/linkedList/genericDataManipulation.c
 TRGERROR_SRC	= src/trgError.c
-
+TRGLOADER_SRC	= src/decoder/trgLoader/trgLoader.c
+TURINGM_SRC		= src/TuringM.c
 
 
 # Arquivos-cabeçalho
-TRGERROR_H		= src/trgError.h
-TOKENS_H		= src/scanner/tokens/tokens.h
-SCANNER_H		= src/scanner/scanner.h
+DECODER_H		= src/decoder/decoder.h
+TOKENS_H		= src/decoder/scanner/tokens/tokens.h
+SCANNER_H		= src/decoder/scanner/scanner.h
 LINKEDL_H       = src/linkedList/linkedList.h
 GNODE_H         = src/linkedList/node.h
 GDMANIP_H       = src/linkedList/genericDataManipulation.h
-
+TRGERROR_H		= src/trgError.h
+TRGLOADER_H		= src/decoder/trgLoader/trgLoader.h
+TURINGM_H		= src/TuringM.h
 
 
 # Arquivos-objeto
 IMAIN_OBJ		= obj/imain.o
+DECODER_OBJ		= obj/decoder.o
 TOKENS_OBJ		= obj/tokens.o
 SCANNER_OBJ		= obj/scanner.o
 LINKEDL_OBJ     = obj/linkedList.o
 GNODE_OBJ       = obj/node.o
 GDMANIP_OBJ     = obj/genericDataManipulation.o
 TRGERROR_OBJ	= obj/trgError.o
-
-
+TRGLOADER_OBJ	= obj/trgLoader.o
+TURINGM_OBJ		= obj/TuringM.o
 
 # Símbolos de arquivos de saída
 OUTPUT_NAME_EXEC		= TuringM
@@ -73,10 +78,12 @@ CFLAG 			= -c
 LFLAG 			= -o
 #LIBFLAG 		=
 SRC 			= $(IMAIN_SRC) $(TRGERROR_SRC) $(TOKENS_SRC) \
-$(SCANNER_SRC) $(LINKEDL_SRC) $(GNODE_SRC) $(GDMANIP_SRC)
+$(SCANNER_SRC) $(LINKEDL_SRC) $(GNODE_SRC) $(GDMANIP_SRC) \
+$(TRGLOADER_SRC) $(TURINGM_SRC)
 
 OBJ				= $(IMAIN_OBJ) $(TRGERROR_OBJ) $(TOKENS_OBJ) \
-$(SCANNER_OBJ) $(LINKEDL_OBJ) $(GNODE_OBJ) $(GDMANIP_OBJ)
+$(SCANNER_OBJ) $(LINKEDL_OBJ) $(GNODE_OBJ) $(GDMANIP_OBJ) \
+$(TRGLOADER_OBJ) $(TURINGM_OBJ)
 
 BIN					= $(OUTPUT_FULLPATH_EXEC)
 
@@ -106,6 +113,12 @@ $(LINKEDL_OBJ): $(LINKEDL_H) $(LINKEDL_SRC) $(GNODE_OBJ) $(GDMANIP_OBJ)
 $(TRGERROR_OBJ): $(TRGERROR_SRC) $(TRGERRROR_H)
 	$(COMPILER) $(CFLAG) $(TRGERROR_SRC) $(LFLAG) $(TRGERROR_OBJ)
 
+$(TRGLOADER_OBJ): $(TRGLOADER_SRC) $(TRGLOADER_H)
+	$(COMPILER) $(CFLAG) $(TRGLOADER_SRC) $(LFLAG) $(TRGLOADER_OBJ)
+
+$(TURINGM_OBJ): $(TURINGM_SRC) $(TURINGM_H)
+	$(COMPILER) $(CFLAG) $(TURINGM_SRC) $(LFLAG) $(TURINGM_OBJ)
+
 $(BIN): $(OBJ)
 	$(COMPILER) $(LFLAG) $(BIN) $(OBJ) $(LIBFLAG)
 
@@ -119,7 +132,7 @@ mk_dir:
 	mkdir -p bin data obj
 
 # LIMPEZA DA PASTA ##########################
-clean: clean_dicwriter clean_instdebug
+clean:
 	rm -f $(OUTPUT_FULLPATH_EXEC) $(LN_SYMBOL) *~ *.swp *.swo \
 	$(OBJ)
 

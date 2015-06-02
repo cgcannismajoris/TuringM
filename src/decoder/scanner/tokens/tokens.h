@@ -29,7 +29,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "../../trgError.h"
+#include "../../../trgError.h"
 
 #define TOKENS_EALLOC               NULL
 #define TOKENS_EALLOC_MSG           "Falha ao alocar memória no TAD TOKENS."
