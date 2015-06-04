@@ -41,6 +41,21 @@
 #define DECODER_FILE_ERROR	-1
 #define DECODER_FILE_ERROR_MSG	"DECODER: Falha ao manipular arquivo."
 
+#define DECODER_EUSER_INVALID_LINE "DECODER: Erro na linha: "
+
+#define DECODER_TOKEN_SEPARATOR	" \t"
+
 MACHINE *decoder_decode(char *filename);
+
+ALPHABET *decoder_getAlphabet(TRGLOADER *loader, uint64_t *lineCounter);
+
+TOKENS *decoder_getNextLineTokens(TRGLOADER *loader, uint64_t *lineCounter);
+
+int decoder_verifChr(char *token);
+
+int decoder_verifTransition(TOKENS *tokens, ALPHABET *inputAlphabet, 
+												ALPHABET *outputAlphabet);
+
+void decoder_setErrorInLine(uint64_t lineCounter);
 
 #endif

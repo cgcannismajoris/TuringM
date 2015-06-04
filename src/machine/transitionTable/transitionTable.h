@@ -34,13 +34,16 @@
 #include "../../linkedList/linkedList.h"
 #include "../../decoder/scanner/tokens/tokens.h"
 
-#define TABLE_ERROR               NULL
-#define TABLE_ERROR_MSG           "Falha ao alocar memória para TRANSITIONTABLE."
+#define TABLE_SUCCESS	0
+#define TABLE_ERROR		-1
+
+#define TABLE_EALLOC               NULL
+#define TABLE_EALLOC_MSG           "TABLE: Falha ao alocar memória."
 
 
 typedef struct _transitionTable{
 	
-	LIST *transitions; //Conteúdo do tipo STATE
+	LIST *states; //Conteúdo do tipo STATE
 
 } TRANSITIONTABLE, TABLE;
 
@@ -48,10 +51,14 @@ TABLE *table_new();
 
 void table_free(TABLE *table);
 
-void table_addState(TABLE *table, STATE *state);
+int table_addState(TABLE *table, STATE *state);
 
-void table_addTransition(TABLE *table, TRANSITION *transition);
+int table_addTransition(TABLE *table, TRANSITION *transition);
 
-TRANSITION *getTransition(TABLE *table, char *actualState, char readedChar);
+TRANSITION *table_getTransition(TABLE *table, char *actualState, char readedChar);
+
+STATE *table_getState(TABLE *table, char *state);
+
+void table_print(TABLE *table);
 
 #endif

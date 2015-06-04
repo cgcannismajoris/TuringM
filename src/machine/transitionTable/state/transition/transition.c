@@ -92,3 +92,10 @@ int transition_cmpReadChar(const void *transition, const void *chr){
 	return (*((char*)chr) - (((TRANSITION*)transition)->readChar)); 
 }
 
+void transition_print(void *transition){
+	
+	TRANSITION *t = transition;
+
+	printf("STATE\t\t= %s\nREAD_CHR\t= %c\nNEXT_STATE\t= %s\nTO_WRITE_CHR\t=%c\nMOVEMENT\t=%c\n", t->actualState, t->readChar, t->nextState, t->writeChar, t->move);
+
+}

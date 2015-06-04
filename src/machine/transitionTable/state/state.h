@@ -38,8 +38,8 @@
 #define STATE_EALLOC_MSG           "Falha ao alocar memória para STATE."
 
 #define STATE_TYPE_START 			1
-#define STATE_TYPE_FINAL 			2
-#define STATE_TYPE_INTERMEDIARY 	3
+#define STATE_TYPE_INTERMEDIARY 	2
+#define STATE_TYPE_FINAL 			3
 
 typedef struct _state{
 	
@@ -61,7 +61,11 @@ char *state_getName(STATE *state);
 
 int state_getType(STATE *state);
 
+void state_setType(STATE *state, int type);
+
 TRANSITION *state_getTransition(STATE *state, char readedChar);
 
+int state_cmpName(const void *name, const void *state);
 
+void state_print(void *state);
 #endif

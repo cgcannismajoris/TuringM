@@ -241,7 +241,7 @@ int lista_printLista(LISTA *this, void (*show_na_tela)(void*)){
 	
 	//Percorre toda a lista exibindo cada elemento
 	for(i = 1; i <= lista_getQuant(this); i++){
-		show_na_tela(aux); //imprime o no na tela
+		show_na_tela(node_getData(aux)); //imprime o no na tela
 		aux = node_getProx(aux); //"caminha" para o proximo nó
 	}
 

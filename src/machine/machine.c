@@ -28,9 +28,16 @@ MACHINE *machine_new(ALPHABET *inputAlphabet, ALPHABET *outputAlphabet,
 	MACHINE *novo;
 
 	if((novo = (MACHINE*)malloc(sizeof(MACHINE))) == NULL){
-
+		trgError_setDesc(MACHINE_EALLOC_MSG);
+		return (NULL);
 	}
 
+	novo->inputAlphabet = inputAlphabet;
+	novo->outputAlphabet = outputAlphabet;
+	novo->whiteChar = whiteChar;
+	novo->table = table;
+
+	return (novo);
 }
 
 void machine_free(MACHINE *machine){

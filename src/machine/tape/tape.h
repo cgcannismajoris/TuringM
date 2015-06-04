@@ -32,22 +32,30 @@
 
 #include "../../linkedList/linkedList.h"
 
-#define TAPE_EALLOC               NULL
-#define TAPE_EALLOC_MSG           "Falha ao alocar memória para TAPE."
+#define TAPE_EALLOC			NULL
+#define TAPE_EALLOC_MSG		"TAPE: Falha ao alocar memória."
 
+#define TAPE_START_SYMBOL	0x1
 
 typedef struct _tape{
 	
 	LIST *tape;
-	NODE *actualSimbol;
+	NODE *actualSymbol;
+
+	char whiteChar;
+	char startChar;
 
 } TAPE;
 
 typedef struct _symbol{
-	char simbolo;
+	char chr;
 } SYMBOL;
 
-TAPE *tape_new(char *tape);
+TAPE *tape_new(char startChar, char whiteChar);
+
+void tape_free(TAPE *tape);
+
+void tape_initialize(TAPE *tape, char *t);
 
 //Se chegou no fim, cria um novo nó!
 NODE *tape_moveRight(TAPE *tape);
@@ -60,4 +68,5 @@ char tape_read(TAPE *tape);
 
 void tape_write(TAPE *tape, char chr);
 
+void tape_showNaTela(TAPE *tape);
 #endif

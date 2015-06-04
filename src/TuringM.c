@@ -25,9 +25,12 @@
 int turing_run(char *file){
 
 	MACHINE *machine = NULL;
+	
+	trgError_new(512);
 
 	//Se ocorrer erro no processamento
 	if((machine = decoder_decode(file)) == NULL){
+		printf("%s\n", trgError_getDesc());
 		printf(TURINGM_DECODER_ERROR_MSG);
 		printf("\n");
 		return (TURINGM_DECODER_ERROR);

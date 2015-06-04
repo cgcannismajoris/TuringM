@@ -36,6 +36,15 @@
 #define TRANSITION_EALLOC		NULL
 #define TRANSITION_EALLOC_MSG	"Falha ao alocar memória para TRANSITIONTABLE."
 
+#define TRANSITION_MOVE_RIGHT	'D'
+#define TRANSITION_MOVE_LEFT	'L'
+#define TRANSITION_STOP			'P'
+
+#define TRANSITION_MOVE_RIGHT_STR	"D"
+#define TRANSITION_MOVE_LEFT_STR	"L"
+#define TRANSITION_STOP_STR			"P"
+
+
 typedef struct _stateTransition{
 
 	char *actualState;
@@ -60,4 +69,6 @@ char transition_getWriteChar(TRANSITION *transition);
 char transition_getMove(TRANSITION *transition);
 
 int transition_cmpReadChar(const void *transition, const void *chr);
+
+void transition_print(void *transition);
 #endif

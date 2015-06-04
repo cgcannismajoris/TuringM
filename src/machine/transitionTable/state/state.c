@@ -73,13 +73,22 @@ int state_getType(STATE *state){
 	return (state->type);
 }
 
-TRANSITION *state_getTransition(STATE *state, char readedChar){
-	NODE *no = lista_search(state->transitions, &readedChar, transition_cmpReadChar);
-
-	if(no != NULL)
-		return (node_getData(no));
-
-	return (NULL);
+void state_setType(STATE *state, int type){
+	state->type = type;
 }
 
+TRANSITION *state_getTransition(STATE *state, char readedChar){
 
+	NODE *no = lista_search(state->transitions, &readedChar, transition_cmpReadChar);
+	return (node_getData(no));
+}
+
+int state_cmpName(const void *name, const void *state){
+	return(strcmp(name, ((STATE*)state)->name));
+}
+
+void state_print(void *state){
+	printf("NAME = %s\n", ((STATE*)state)->name);
+	lista_printLista(((STATE*)state)->transitions, transition_print);
+	printf("\n");
+}
