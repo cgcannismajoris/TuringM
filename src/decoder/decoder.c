@@ -72,6 +72,11 @@ MACHINE *decoder_decode(char *filename){
 
 	//Obtém o caractere branco e o estado inicial
 	token = decoder_getNextLineTokens(loader, &lineCounter);
+	
+	if(token_getQtd(token) != 2){
+		decoder_setErrorInLine(lineCounter);	
+		return (NULL);
+	}
 
 	//Obtém o caractere branco
 	if(decoder_verifChr(token_getToken(token, 0)) != 0){
@@ -105,7 +110,8 @@ MACHINE *decoder_decode(char *filename){
 
 		if(state == NULL){
 			//Erro: Estado não definido
-			printf("ERRO!");
+			printf("DECODER: Estado não definido!\n");
+			decoder_setErrorInLine(lineCounter);
 			return (NULL);
 		}
 
@@ -113,7 +119,7 @@ MACHINE *decoder_decode(char *filename){
 	}
 
 	//Obtém o estado inicial da fita
-	tape = tape_new(TAPE_START_SYMBOL, whiteChar);
+	tape = tape_new(whiteChar);
 	token = decoder_getNextLineTokens(loader, &lineCounter);
 	tape_initialize(tape, token_toStringWithoutSeparator(token));
 
@@ -132,8 +138,8 @@ MACHINE *decoder_decode(char *filename){
 			return (NULL);
 		}
 	}
-	
-	machine = machine_new(inputAlphabet, outputAlphabet, whiteChar, table);
+
+	machine = machine_new(inputAlphabet, outputAlphabet, whiteChar, table, tape);
 
 	return (machine);
 }

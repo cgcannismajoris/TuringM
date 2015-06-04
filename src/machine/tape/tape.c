@@ -23,11 +23,10 @@
 
 #include "tape.h"
 
-TAPE *tape_new(char startChar, char whiteChar){
+TAPE *tape_new(char whiteChar){
 	
 	TAPE *novo;
-	SYMBOL *start;
-
+	
 	if((novo = (TAPE*)malloc(sizeof(TAPE))) == NULL){
 		trgError_setDesc(TAPE_EALLOC_MSG);
 		return (NULL);
@@ -40,21 +39,9 @@ TAPE *tape_new(char startChar, char whiteChar){
 
 		return (NULL);
 	}
-	
-	if((start = (SYMBOL*)malloc(sizeof(SYMBOL))) == NULL){
-		trgError_setDesc(TAPE_EALLOC_MSG);
-
-		lista_free(novo->tape);
-		free(novo);
-
-		return (NULL);
-	}	
-	start->chr = TAPE_START_SYMBOL;
-
-	lista_insertLastNode(novo->tape, lista_node_new(start));
-
+	novo->whiteChar = whiteChar;	
 	novo->actualSymbol = lista_getRaiz(novo->tape);
-
+	
 	return (novo);
 }
 
@@ -74,7 +61,7 @@ void tape_initialize(TAPE *tape, char *t){
 }
 
 //Se chegou no fim, cria um novo nó!
-NODE *tape_moveRight(TAPE *tape){
+SYMBOL *tape_moveRight(TAPE *tape){
 	
 	if(node_getProx(tape->actualSymbol) == NULL){
 
@@ -83,23 +70,28 @@ NODE *tape_moveRight(TAPE *tape){
 		
 		simbolo->chr = tape->whiteChar;
 		lista_insertLastNode(tape->tape, novo);
-		tape->actualSymbol = novo;
+		tape->actualSymbol = lista_getLast(tape->tape);
 	}
 	else{
 		tape->actualSymbol = node_getProx(tape->actualSymbol);
 	}
 
-	return (tape->actualSymbol);
+	return (node_getData(tape->actualSymbol));
 }
 
-NODE *tape_moveLeft(TAPE *tape){
+SYMBOL *tape_moveLeft(TAPE *tape){
+
+	if(node_getAnte(tape->actualSymbol) == NULL){
+		return (NULL);
+	}
+
 	tape->actualSymbol = node_getAnte(tape->actualSymbol);
 
-	return (tape->actualSymbol);
+	return (node_getData(tape->actualSymbol));
 }
 
-NODE *tape_getActual(TAPE *tape){
-	return (tape->actualSymbol);
+SYMBOL *tape_getActual(TAPE *tape){
+	return (node_getData(tape->actualSymbol));
 }
 
 char tape_read(TAPE *tape){
@@ -114,11 +106,30 @@ void symbol_showNaTela(void *symbol){
 	printf("%c ", ((SYMBOL*)symbol)->chr);
 }
 
-void tape_showNaTela(TAPE *tape){
+void tape_print(TAPE *tape){
 	
+	uint32_t i;
+	NODE *tmp;
+
 	if(lista_getQuant(tape->tape) == 0){
 		return;
 	}
 
-	lista_printLista(tape->tape, symbol_showNaTela);	
+//	lista_printLista(tape->tape, symbol_showNaTela);	
+	
+	tmp = lista_getRaiz(tape->tape);
+
+	for(i = 0; i < lista_getQuant(tape->tape); i++){
+		
+		if(tmp == tape->actualSymbol){
+			textcolor(GREEN);
+			printf("%c ", ((SYMBOL*)node_getData(tmp))->chr);
+			textcolor(WHITE);
+		}
+		else{
+			printf("%c ", ((SYMBOL*)node_getData(tmp))->chr);
+		}
+		tmp = node_getProx(tmp);	
+	}
+	printf("\n");
 }

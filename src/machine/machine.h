@@ -49,7 +49,7 @@ typedef struct _machine {
 } MACHINE;
 
 MACHINE *machine_new(ALPHABET *inputAlphabet, ALPHABET *outputAlphabet, 
-						char whiteChar, TRANSITIONTABLE *table);
+						char whiteChar, TRANSITIONTABLE *table, TAPE *tape);
 
 void machine_free(MACHINE *machine);
 

@@ -59,6 +59,8 @@ TRANSITION *table_getTransition(TABLE *table, char *actualState, char readedChar
 
 STATE *table_getState(TABLE *table, char *state);
 
+STATE *table_getStartState(TABLE *table);
+
 void table_print(TABLE *table);
 
 #endif

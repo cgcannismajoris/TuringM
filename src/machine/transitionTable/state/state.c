@@ -87,6 +87,10 @@ int state_cmpName(const void *name, const void *state){
 	return(strcmp(name, ((STATE*)state)->name));
 }
 
+int state_isThisType(const void *type, const void *state){
+	return (((STATE*)state)->type - *((int*)type));
+}
+
 void state_print(void *state){
 	printf("NAME = %s\n", ((STATE*)state)->name);
 	lista_printLista(((STATE*)state)->transitions, transition_print);

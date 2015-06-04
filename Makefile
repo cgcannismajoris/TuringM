@@ -63,6 +63,8 @@ LINKEDLIST_SRCS	= $(LINKEDL_SRC) $(GNODE_SRC) $(GDMANIP_SRC)
 ## trgError ##################################
 TRGERROR_SRC	= src/trgError.c
 
+## Conio #####################################
+CONIO_SRC	= src/gconio.c
 
 # Arquivos-cabeçalho #########################
 ## Cabeçalhos principais ######################
@@ -97,7 +99,10 @@ GDMANIP_H       = src/linkedList/genericDataManipulation.h
 LINKEDLIST_HEADERS	= $(LINKEDL_H) $(GNODE_H) $(GDMANIP_H)
 
 ## trgError ##################################
-TRGERROR_H		= src/trgError.h
+TRGERROR_H	= src/trgError.h
+
+## Conio #####################################
+CONIO_H		= src/gconio.h
 
 
 # Arquivos-objeto ############################
@@ -136,7 +141,8 @@ LINKEDLIST_OBJS	= $(LINKEDL_OBJ) $(GNODE_OBJ) $(GDMANIP_OBJ)
 ## trgError ##################################
 TRGERROR_OBJ	= obj/trgError.o
 
-
+## Conio #####################################
+CONIO_OBJ		= obj/gconio.o
 
 # Símbolos de arquivos de saída
 OUTPUT_NAME_EXEC		= TuringM
@@ -151,9 +157,9 @@ COMPILER 		= gcc
 CFLAG 			= -c
 LFLAG 			= -o
 #LIBFLAG 		=
-SRC 			= $(MAIN_SRCS) $(DECODER_SRCS) $(MACHINE_SRCS) $(LINKEDLIST_SRCS) $(TRGERROR_SRCS) $(TRGERROR_SRC)
+SRC 			= $(MAIN_SRCS) $(DECODER_SRCS) $(MACHINE_SRCS) $(LINKEDLIST_SRCS) $(TRGERROR_SRCS) $(TRGERROR_SRC) $(CONIO_SRC)
 
-OBJ				= $(MAIN_OBJS) $(DECODER_OBJS) $(MACHINE_OBJS) $(LINKEDLIST_OBJS) $(TRGERROR_OBJS) $(TRGERROR_OBJ)
+OBJ				= $(MAIN_OBJS) $(DECODER_OBJS) $(MACHINE_OBJS) $(LINKEDLIST_OBJS) $(TRGERROR_OBJS) $(TRGERROR_OBJ) $(CONIO_OBJ)
 
 BIN				= $(OUTPUT_FULLPATH_EXEC)
 
@@ -217,7 +223,10 @@ $(LINKEDL_OBJ): $(LINKEDL_H) $(LINKEDL_SRC) $(GNODE_OBJ) $(GDMANIP_OBJ)
 $(TRGERROR_OBJ): $(TRGERROR_SRC) $(TRGERRROR_H)
 	$(COMPILER) $(CFLAG) $(TRGERROR_SRC) $(LFLAG) $(TRGERROR_OBJ)
 
-
+## Conio #####################################
+$(CONIO_OBJ): $(CONIO_SRC) $(CONIO_H)
+	$(COMPILER) $(CFLAG) $(CONIO_SRC) $(LFLAG) $(CONIO_OBJ)
+	
 # GERAÇÃO DO LINK SIMBÓLICO #################
 LN_SYMBOL:
 	rm -f $(OUTPUT_NAME_EXEC)

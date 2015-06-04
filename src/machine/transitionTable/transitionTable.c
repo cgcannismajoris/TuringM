@@ -79,16 +79,15 @@ int table_addTransition(TABLE *table, TRANSITION *transition){
 }
 
 TRANSITION *table_getTransition(TABLE *table, char *actualState, char readedChar){
-	
+
 	TRANSITION *transition = NULL;
 	STATE *state = table_getState(table, actualState);
-
+	
 	if(state == NULL){
 		return (NULL);
 	}
 
 	transition = state_getTransition(state, readedChar);
-
 	return (transition);
 
 }
@@ -100,6 +99,15 @@ STATE *table_getState(TABLE *table, char *state){
 	return (node_getData(no));
 }
 
+STATE *table_getStartState(TABLE *table){
+
+	int id = STATE_TYPE_START;
+
+	NODE *no = lista_search(table->states, &id, state_isThisType);
+
+	return (node_getData(no));
+}
+ 
 void table_print(TABLE *table){
 	lista_printLista(table->states, state_print);
 }

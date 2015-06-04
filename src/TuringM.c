@@ -37,7 +37,9 @@ int turing_run(char *file){
 	}
 	
 	//Chama machine_run e verifica o retorno
-
+	if(machine_run(machine) != 0){
+		printf("TUGINGM: ERRO AO EXECUTAR AUTÔMATO!\n\n");
+	}
 	return (0);
 }
 

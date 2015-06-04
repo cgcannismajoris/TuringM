@@ -23,7 +23,7 @@
 #include "machine.h"
 
 MACHINE *machine_new(ALPHABET *inputAlphabet, ALPHABET *outputAlphabet, 
-						char whiteChar, TRANSITIONTABLE *table){
+						char whiteChar, TRANSITIONTABLE *table, TAPE *tape){
 
 	MACHINE *novo;
 
@@ -36,6 +36,7 @@ MACHINE *machine_new(ALPHABET *inputAlphabet, ALPHABET *outputAlphabet,
 	novo->outputAlphabet = outputAlphabet;
 	novo->whiteChar = whiteChar;
 	novo->table = table;
+	novo->tape = tape;
 
 	return (novo);
 }
@@ -46,5 +47,42 @@ void machine_free(MACHINE *machine){
 
 int machine_run(MACHINE *machine){
 
+	TRANSITION *transition;
+	STATE *actualState;	
+
+	tape_print(machine->tape);
+
+	actualState = table_getStartState(machine->table);
+
+	while(state_getType(actualState) != STATE_TYPE_FINAL){
+
+		transition = table_getTransition(machine->table, 
+							state_getName(actualState), 
+							tape_read(machine->tape));
+
+		if(transition != NULL){
+			
+			tape_write(machine->tape, transition_getWriteChar(transition));
+	
+			switch(transition_getMove(transition)){
+				case TRANSITION_MOVE_RIGHT:
+					tape_moveRight(machine->tape);
+					break;
+	
+				case TRANSITION_MOVE_LEFT:
+					tape_moveLeft(machine->tape);
+					break;
+			}
+	
+			actualState = table_getState(machine->table, transition_getNextState(transition));
+			tape_print(machine->tape);
+		}
+		else{
+				printf("MACHINE: TRANSIÇÃO INVÁLIDA!\n");
+				return (-1);
+		}
+	}
+
+	return (0);
 }
 

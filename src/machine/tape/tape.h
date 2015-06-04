@@ -30,12 +30,13 @@
 
 #include "../../trgError.h"
 
+#include "../../gconio.h"
+
 #include "../../linkedList/linkedList.h"
+
 
 #define TAPE_EALLOC			NULL
 #define TAPE_EALLOC_MSG		"TAPE: Falha ao alocar memória."
-
-#define TAPE_START_SYMBOL	0x1
 
 typedef struct _tape{
 	
@@ -51,22 +52,22 @@ typedef struct _symbol{
 	char chr;
 } SYMBOL;
 
-TAPE *tape_new(char startChar, char whiteChar);
+TAPE *tape_new(char whiteChar);
 
 void tape_free(TAPE *tape);
 
 void tape_initialize(TAPE *tape, char *t);
 
 //Se chegou no fim, cria um novo nó!
-NODE *tape_moveRight(TAPE *tape);
+SYMBOL *tape_moveRight(TAPE *tape);
 
-NODE *tape_moveLeft(TAPE *tape);
+SYMBOL *tape_moveLeft(TAPE *tape);
 
-NODE *tape_getActual(TAPE *tape);
+SYMBOL *tape_getActual(TAPE *tape);
 
 char tape_read(TAPE *tape);
 
 void tape_write(TAPE *tape, char chr);
 
-void tape_showNaTela(TAPE *tape);
+void tape_print(TAPE *tape);
 #endif

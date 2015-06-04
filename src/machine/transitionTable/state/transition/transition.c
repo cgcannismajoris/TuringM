@@ -49,6 +49,10 @@ TRANSITION *transition_new(char *actualState, char readChar, char *nextState,
 		trgError_setDesc(TRANSITION_EALLOC_MSG);
 		return (NULL);
 	}
+	
+	//Faz com que o idicador de movimento esteja dentro do padrão (maiúsculo)	
+	if(move > 80)
+		move = move - 32;
 
 	novo->move = move;
 	novo->readChar = readChar;
@@ -88,7 +92,7 @@ char transition_getMove(TRANSITION *transition){
 	return (transition->move);
 }
 
-int transition_cmpReadChar(const void *transition, const void *chr){
+int transition_cmpReadChar(const void *chr, const void *transition){
 	return (*((char*)chr) - (((TRANSITION*)transition)->readChar)); 
 }
 
@@ -96,6 +100,6 @@ void transition_print(void *transition){
 	
 	TRANSITION *t = transition;
 
-	printf("STATE\t\t= %s\nREAD_CHR\t= %c\nNEXT_STATE\t= %s\nTO_WRITE_CHR\t=%c\nMOVEMENT\t=%c\n", t->actualState, t->readChar, t->nextState, t->writeChar, t->move);
+	printf("STATE\t\t= %s\nREAD_CHR\t= %c\nNEXT_STATE\t= %s\nTO_WRITE_CHR\t= %c\nMOVEMENT\t= %c\n", t->actualState, t->readChar, t->nextState, t->writeChar, t->move);
 
 }

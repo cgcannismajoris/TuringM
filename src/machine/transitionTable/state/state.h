@@ -67,5 +67,7 @@ TRANSITION *state_getTransition(STATE *state, char readedChar);
 
 int state_cmpName(const void *name, const void *state);
 
+int state_isThisType(const void *type, const void *state);
+
 void state_print(void *state);
 #endif
