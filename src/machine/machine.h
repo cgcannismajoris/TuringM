@@ -42,14 +42,14 @@ typedef struct _machine {
 	ALPHABET *outputAlphabet;
 	char whiteChar;
 
-	TRANSITIONTABLE *table;
+	TABLE *table;
 
 	TAPE *tape;	
 
 } MACHINE;
 
 MACHINE *machine_new(ALPHABET *inputAlphabet, ALPHABET *outputAlphabet, 
-						char whiteChar, TRANSITIONTABLE *table, TAPE *tape);
+						char whiteChar, TABLE *table, TAPE *tape);
 
 void machine_free(MACHINE *machine);
 

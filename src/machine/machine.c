@@ -23,7 +23,7 @@
 #include "machine.h"
 
 MACHINE *machine_new(ALPHABET *inputAlphabet, ALPHABET *outputAlphabet, 
-						char whiteChar, TRANSITIONTABLE *table, TAPE *tape){
+						char whiteChar, TABLE *table, TAPE *tape){
 
 	MACHINE *novo;
 

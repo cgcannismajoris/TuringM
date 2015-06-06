@@ -68,7 +68,7 @@ TABLE *decoder_loadAllStates(TRGLOADER *loader, uint64_t *lineCounter, char *sta
 
 void decoder_setStartState(TABLE *table, char *startState);
 
-TABLE *decoder_setFinalStates(TRGLOADER *loader, uint64_t *lineCounter, TABLE *table);
+TABLE *decoder_getFinalStates(TRGLOADER *loader, uint64_t *lineCounter, TABLE *table);
 
 ALPHABET *decoder_getAlphabet(TRGLOADER *loader, uint64_t *lineCounter);
 

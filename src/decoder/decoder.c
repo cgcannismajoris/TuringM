@@ -211,7 +211,7 @@ TABLE *decoder_loadAllStates(TRGLOADER *loader, uint64_t *lineCounter, char *sta
 	}
 
 	//Obtém e Seta os estados finais
-	table = decoder_setFinalStates(loader, lineCounter, table);
+	table = decoder_getFinalStates(loader, lineCounter, table);
 	
 	return (table);
 }
@@ -220,7 +220,7 @@ void decoder_setStartState(TABLE *table, char *startState){
 	table_addState(table, state_new(startState, STATE_TYPE_START));
 }
 
-TABLE *decoder_setFinalStates(TRGLOADER *loader, uint64_t *lineCounter, TABLE *table){
+TABLE *decoder_getFinalStates(TRGLOADER *loader, uint64_t *lineCounter, TABLE *table){
 
 	uint32_t counter;
 	TOKENS *token = decoder_getNextLineTokens(loader, lineCounter);

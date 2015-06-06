@@ -70,7 +70,7 @@ char transition_getWriteChar(TRANSITION *transition);
 
 char transition_getMove(TRANSITION *transition);
 
-int transition_cmpReadChar(const void *transition, const void *chr);
+int transition_cmpReadChar(const void *chr, const void *transition);
 
 void transition_print(void *transition);
 #endif
