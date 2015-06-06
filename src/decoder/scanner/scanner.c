@@ -65,7 +65,7 @@ TOKENS *scanner_scan(const char *sentence,
         if ((aux_str = malloc(strlen(pch) + 1)) == NULL)
         {
         	free(str);
-			lista_free(lista);
+			lista_free(lista, free);
             return SCANNER_ERROR;
         }
 
@@ -74,7 +74,7 @@ TOKENS *scanner_scan(const char *sentence,
         if((aux = lista_node_new(aux_str)) == NULL)
 		{
 			free(str);
-			lista_free(lista);
+			lista_free(lista, free);
 			return (SCANNER_ERROR);
 		}
 
@@ -88,7 +88,7 @@ TOKENS *scanner_scan(const char *sentence,
     if ((toks = token_new(cont_tokens)) == TOKENS_EALLOC)
     {
     	free(str);
-		lista_free(lista);
+		lista_free(lista, free);
         return SCANNER_ERROR;
     }
 
@@ -101,7 +101,7 @@ TOKENS *scanner_scan(const char *sentence,
 
         if (token_addToken(toks, (char *)node_getData(aux)) == TOKENS_ETOKOVERFLOW)
         {
-			lista_free(lista);
+			lista_free(lista, free);
 			token_free(toks);
             trgError_setDesc(SCANNER_ERROR_MSG);
             return SCANNER_ERROR;
@@ -112,7 +112,7 @@ TOKENS *scanner_scan(const char *sentence,
     }
 
 	/* Libera a memóra da lista. */
-    lista_free(lista);
+    lista_free(lista, free);
     
     /* Libera memória. */
 	free(str);

@@ -54,11 +54,16 @@ STATE *state_new(char *name, int type){
 	return (novo);
 }
 
-void state_free(STATE *state){
-	lista_free(state->transitions);
+void _state_free(STATE *state){
+	lista_free(state->transitions, transition_free);
 	free(state->name);
 	free(state);
 }
+
+void state_free(void *state){
+	_state_free((STATE*)state);
+}
+
 
 void state_addTransition(STATE *state, TRANSITION *transition){
 	NODE *no = lista_node_new(transition);

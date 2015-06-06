@@ -41,11 +41,34 @@
 #define DECODER_FILE_ERROR	-1
 #define DECODER_FILE_ERROR_MSG	"DECODER: Falha ao manipular arquivo."
 
-#define DECODER_EUSER_INVALID_LINE "DECODER: Erro na linha: "
+#define DECODER_EUSER_INVALID_LINE_MSG "DECODER: Erro na linha: "
+
+#define DECODER_EUSER_FEWARGUMENTS_MSG "DECODER: Quantidade incorreta de termos."
+#define DECODER_EUSER_INVALIDTRANSITION_MSG "DECODER: Erro na declaração da transição."
+#define DECODER_EUSER_STATE_UNDECLARED_MSG "DECODER: Estado não declarado."
+#define DECODER_EUSER_TRANSITIONSNOTDECLARED_MSG "DECODER: Nenhuma transição declarada."
 
 #define DECODER_TOKEN_SEPARATOR	" \t"
 
+#define DECODER_VERIFTRANSITION_PASS					0
+#define DECODER_VERIFTRANSITION_ERROR_INVALIDQTD		-1
+#define DECODER_VERIFTRANSITION_ERROR_INVALIDARGUMENT	-2
+#define DECODER_VERIFTRANSITION_ERROR_CHRNOTINALPHABET	-3
+#define DECODER_VERIFTRANSITION_ERROR_INVALIDMOVEMENT	-4
+
 MACHINE *decoder_decode(char *filename);
+
+TABLE *decoder_getTransitionTable(TRGLOADER *loader, uint64_t *lineCounter, 
+								ALPHABET *inputAlphabet, ALPHABET *outputAlphabet, 
+								TABLE *table);
+
+TAPE *decoder_getTape(TRGLOADER *loader, uint64_t *lineCounter, char whiteChar);
+
+TABLE *decoder_loadAllStates(TRGLOADER *loader, uint64_t *lineCounter, char *startState);
+
+void decoder_setStartState(TABLE *table, char *startState);
+
+TABLE *decoder_setFinalStates(TRGLOADER *loader, uint64_t *lineCounter, TABLE *table);
 
 ALPHABET *decoder_getAlphabet(TRGLOADER *loader, uint64_t *lineCounter);
 
@@ -56,6 +79,6 @@ int decoder_verifChr(char *token);
 int decoder_verifTransition(TOKENS *tokens, ALPHABET *inputAlphabet, 
 												ALPHABET *outputAlphabet);
 
-void decoder_setErrorInLine(uint64_t lineCounter);
+void decoder_setErrorInLine(uint64_t lineCounter, char *aditionalStr);
 
 #endif

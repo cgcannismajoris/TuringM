@@ -69,16 +69,20 @@ LIST *lista_new();
 /* Descrição	: Desaloca da memória uma lista inteira (Lista e Elementos).
  * Argumentos	: 
  * 	 -> LISTA *this = Lista a ser desalocada da memória.
+ * 	 -> void(*data_free)(void *) = Método responsável por desalocar o
+ * 	 conteúdo do nó genérico.
  * Retorno		: Void.
  */
-LIST_INT lista_free(LISTA *this);
+LIST_INT lista_free(LISTA *this, void(*data_free)(void *));
 
 /* Descrição	: Desaloca da memória todos os elementos de uma lista.
  * Argumentos	: 
  * 	 -> LISTA *this = Lista a ter seus elementos apagados.
+ * 	 -> void(*data_free)(void *) = Método responsável por desalocar o
+ * 	 conteúdo do nó genérico.
  * Retorno		: Void.
  */
-LIST_INT lista_clear(LISTA *this);
+LIST_INT lista_clear(LISTA *this, void(*data_free)(void *));
 
 /* Descrição	: Instancia um novo nó de lista encadeada..
  * Argumentos	: 

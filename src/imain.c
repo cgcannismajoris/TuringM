@@ -43,13 +43,13 @@ texto codificado no padrão ANSI ASCII;\n\n");
 		return (EXIT_SUCCESS);
 	}
 	//Se a quantidade de argumentos excede o limite...
-	else if(argc != 2)
+	else if(argc > 3)
 	{
 		printf("Linha de comando inválida. Invoque o programa sem argumentos \
 para mais informações.\n");
 		return (EXIT_FAILURE);
 	}
-
+	
 	turing_run(argv[1]);	
 
 	return EXIT_SUCCESS;

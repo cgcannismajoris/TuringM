@@ -28,12 +28,13 @@ TABLE *table_new(){
 	TABLE *novo = (TABLE*)malloc(sizeof(TABLE));
 	
 	novo->states = lista_new();
-
+	novo->qtdTransitions = 0;
 	return (novo);
 }
 
 void table_free(TABLE *table){
-
+	lista_free(table->states, state_free);
+	free(table);
 }
 
 int table_addState(TABLE *table, STATE *state){
@@ -74,7 +75,7 @@ int table_addTransition(TABLE *table, TRANSITION *transition){
 	}
 
 	state_addTransition(state, transition);
-
+	table->qtdTransitions++;
 	return (TABLE_SUCCESS);
 }
 
@@ -107,7 +108,11 @@ STATE *table_getStartState(TABLE *table){
 
 	return (node_getData(no));
 }
- 
+
+uint64_t table_getQtdTransitions(TABLE *table){
+	return (table->qtdTransitions);
+}
+
 void table_print(TABLE *table){
 	lista_printLista(table->states, state_print);
 }

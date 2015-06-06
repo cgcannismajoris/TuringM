@@ -40,6 +40,9 @@ int turing_run(char *file){
 	if(machine_run(machine) != 0){
 		printf("TUGINGM: ERRO AO EXECUTAR AUTÔMATO!\n\n");
 	}
+
+	machine_free(machine);
+
 	return (0);
 }
 

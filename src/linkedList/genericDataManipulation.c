@@ -36,15 +36,15 @@ GENERIC *genericData_new(void *data, GENERIC_UCHAR ID){
 	return(new);
 }
 
-GENERIC_INT genericData_free(GENERIC *this){
+GENERIC_INT genericData_free(GENERIC *this, void(*data_free)(void *)){
 	if(this != NULL){
 	
 		//Apaga o conteúdo do tipo genérico
 		this->data_ID = 0;
-		this->data = 0;
-
+		
 		//Desalocando o conteúdo genérico
-		free(this->data);
+		data_free(this->data);
+		
 		//Desalocando o tipo GENERIC
 		free(this);
 

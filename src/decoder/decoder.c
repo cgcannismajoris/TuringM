@@ -43,30 +43,27 @@ MACHINE *decoder_decode(char *filename){
 	char whiteChar;
 
 	MACHINE *machine;
-
-	if((table = table_new()) == NULL){
-		return (NULL);
-	}
-
 	if((loader = trgLoader_new(filename)) == NULL){
 		printf(DECODER_FILE_ERROR_MSG);
 		printf("\n");
-		table_free(table);
+		
 		return (NULL);
 	}
 
 	//Gera o alfabeto de entrada
 	if((inputAlphabet = decoder_getAlphabet(loader, &lineCounter)) == NULL){
+		
 		trgLoader_free(loader);
-		table_free(table);
+		
 		return (NULL);
 	}
 
 	//Gera o alfabeto de saída
 	if((outputAlphabet = decoder_getAlphabet(loader, &lineCounter)) == NULL){
+		
 		alphabet_free(inputAlphabet);
 		trgLoader_free(loader);
-		table_free(table);
+		
 		return (NULL);
 	}
 
@@ -74,59 +71,81 @@ MACHINE *decoder_decode(char *filename){
 	token = decoder_getNextLineTokens(loader, &lineCounter);
 	
 	if(token_getQtd(token) != 2){
-		decoder_setErrorInLine(lineCounter);	
+		decoder_setErrorInLine(lineCounter, DECODER_EUSER_FEWARGUMENTS_MSG);
+		
+		alphabet_free(inputAlphabet);
+		alphabet_free(outputAlphabet);
+		trgLoader_free(loader);
+			
 		return (NULL);
 	}
 
 	//Obtém o caractere branco
 	if(decoder_verifChr(token_getToken(token, 0)) != 0){
-
-		decoder_setErrorInLine(lineCounter);
-
+		decoder_setErrorInLine(lineCounter, NULL);
+		
 		alphabet_free(inputAlphabet);
+		alphabet_free(outputAlphabet);
 		trgLoader_free(loader);
-		table_free(table);
 
 		return (NULL);
 	}
 	whiteChar = (token_getToken(token, 0))[0];
 
-	//Obtém o estado inicial
-	table_addState(table, state_new(token_getToken(token, 1), STATE_TYPE_START));
-	
 	//Obtém a lista de todos os estados
-	token = decoder_getNextLineTokens(loader, &lineCounter);
+	table = decoder_loadAllStates(loader, &lineCounter, token_getToken(token, 1));
+	
+	if(table == NULL){
+		//O erro já foi setado em decoder_loadAllStates
+		//Basta limpar a memória
 
-	for(counter = 0; counter < token_getQtd(token); counter++){
-		table_addState(table, state_new(token_getToken(token, counter), 
-								STATE_TYPE_INTERMEDIARY));
-	}
+		alphabet_free(inputAlphabet);
+		alphabet_free(outputAlphabet);
+		trgLoader_free(loader);
 
-	//Obtém e Seta os estados finais
-	token = decoder_getNextLineTokens(loader, &lineCounter);
-
-	for(counter = 0; counter < token_getQtd(token); counter++){
-		STATE *state = table_getState(table, token_getToken(token, counter));
-
-		if(state == NULL){
-			//Erro: Estado não definido
-			printf("DECODER: Estado não definido!\n");
-			decoder_setErrorInLine(lineCounter);
-			return (NULL);
-		}
-
-		state_setType(state, STATE_TYPE_FINAL);
+		return (NULL);
 	}
 
 	//Obtém o estado inicial da fita
-	tape = tape_new(whiteChar);
-	token = decoder_getNextLineTokens(loader, &lineCounter);
-	tape_initialize(tape, token_toStringWithoutSeparator(token));
+	tape = decoder_getTape(loader, &lineCounter, whiteChar);
+	if(table == NULL){
+		//O erro já foi setado em decoder_loadAllStates
+		//Basta limpar a memória
+
+		alphabet_free(inputAlphabet);
+		alphabet_free(outputAlphabet);
+		trgLoader_free(loader);
+
+		return (NULL);
+	}
 
 	//Obtém a tabela de transições
-	while((token = decoder_getNextLineTokens(loader, &lineCounter)) != NULL){
+	table = decoder_getTransitionTable(loader, &lineCounter, inputAlphabet, 
+														outputAlphabet, table);
+	if(table == NULL){
+		alphabet_free(inputAlphabet);
+		alphabet_free(outputAlphabet);
+		trgLoader_free(loader);
+		return (NULL);
+	}
+
+	machine = machine_new(inputAlphabet, outputAlphabet, whiteChar, table, tape);
+
+	return (machine);
+}
+
+TABLE *decoder_getTransitionTable(TRGLOADER *loader, uint64_t *lineCounter, 
+								ALPHABET *inputAlphabet, ALPHABET *outputAlphabet, 
+								TABLE *table){
+	
+	TOKENS *token;
+	TRANSITION *transition;	
+
+	while((token = decoder_getNextLineTokens(loader, lineCounter)) != NULL){
 		if(decoder_verifTransition(token, inputAlphabet, outputAlphabet) != 0){
-			decoder_setErrorInLine(lineCounter);
+			token_free(token);
+			decoder_setErrorInLine(*lineCounter, DECODER_EUSER_INVALIDTRANSITION_MSG);
+			table_free(table);
 			return (NULL);
 		}
 	
@@ -135,13 +154,93 @@ MACHINE *decoder_decode(char *filename){
 						token_getToken(token, 3)[0], token_getToken(token, 4)[0]);
 		
 		if(table_addTransition(table, transition) != TABLE_SUCCESS){
+			trgError_setDesc(DECODER_EUSER_STATE_UNDECLARED_MSG);
+			token_free(token);
+			table_free(table);
 			return (NULL);
 		}
+
+		token_free(token);
+	}
+	//Se não foram inseridas transições...	
+	if(table_getQtdTransitions(table) == 0){
+		trgError_setDesc(DECODER_EUSER_TRANSITIONSNOTDECLARED_MSG);
+		table_free(table);
+		table = NULL;
 	}
 
-	machine = machine_new(inputAlphabet, outputAlphabet, whiteChar, table, tape);
+	return (table);
+}
 
-	return (machine);
+TAPE *decoder_getTape(TRGLOADER *loader, uint64_t *lineCounter, char whiteChar){
+
+	TAPE *tape;
+	TOKENS *token;
+	if((tape = tape_new(whiteChar)) == NULL){
+		return (NULL);
+	}
+
+	if((token = decoder_getNextLineTokens(loader, lineCounter)) == NULL){
+		return (NULL);
+	}
+
+	tape_initialize(tape, token_toStringWithoutSeparator(token));
+
+	return (tape);
+}
+
+TABLE *decoder_loadAllStates(TRGLOADER *loader, uint64_t *lineCounter, char *startState){
+
+	TABLE *table;
+	uint32_t counter;
+	TOKENS *token;
+
+	if((table = table_new()) == NULL){
+		return (NULL);
+	}
+
+	//seta o estado inicial
+	decoder_setStartState(table, startState);
+	
+	//Obtém a lista de todos os estados
+	token = decoder_getNextLineTokens(loader, lineCounter);
+
+	for(counter = 0; counter < token_getQtd(token); counter++){
+		table_addState(table, state_new(token_getToken(token, counter), 
+								STATE_TYPE_INTERMEDIARY));
+	}
+
+	//Obtém e Seta os estados finais
+	table = decoder_setFinalStates(loader, lineCounter, table);
+	
+	return (table);
+}
+
+void decoder_setStartState(TABLE *table, char *startState){
+	table_addState(table, state_new(startState, STATE_TYPE_START));
+}
+
+TABLE *decoder_setFinalStates(TRGLOADER *loader, uint64_t *lineCounter, TABLE *table){
+
+	uint32_t counter;
+	TOKENS *token = decoder_getNextLineTokens(loader, lineCounter);
+
+	for(counter = 0; counter < token_getQtd(token); counter++){
+		STATE *state = table_getState(table, token_getToken(token, counter));
+
+		if(state == NULL){
+			//Erro: Estado não definido
+			decoder_setErrorInLine(*lineCounter, DECODER_EUSER_STATE_UNDECLARED_MSG);
+
+			table_free(table);
+
+			return (NULL);
+		}
+
+		state_setType(state, STATE_TYPE_FINAL);
+	}
+
+	return (table);
 }
 
 ALPHABET *decoder_getAlphabet(TRGLOADER *loader, uint64_t *lineCounter){
@@ -192,31 +291,38 @@ int decoder_verifChr(char *token){
 int decoder_verifTransition(TOKENS *tokens, ALPHABET *inputAlphabet, 
 												ALPHABET *outputAlphabet){
 
-	if(token_getQtd(tokens) != 5 || strlen(token_getToken(tokens, 1)) != 1 ||
+	if(token_getQtd(tokens) != 5){
+		return (DECODER_VERIFTRANSITION_ERROR_INVALIDQTD);
+	}
+
+	if(strlen(token_getToken(tokens, 1)) != 1 ||
 	   strlen(token_getToken(tokens, 3)) != 1 || 
 	   strlen(token_getToken(tokens, 4)) != 1){
 
-		return (-1);
+		return (DECODER_VERIFTRANSITION_ERROR_INVALIDARGUMENT);
 	}
 	
 	if(alphabet_verif(inputAlphabet, token_getToken(tokens, 1)[0]) < 0 ||
 	   alphabet_verif(outputAlphabet, token_getToken(tokens, 3)[0]) < 0){
-		return (-1);
+
+		return (DECODER_VERIFTRANSITION_ERROR_CHRNOTINALPHABET);
 	}
 	
 	if(strcasecmp(token_getToken(tokens, 4), TRANSITION_MOVE_LEFT_STR) != 0 && 
 	   strcasecmp(token_getToken(tokens, 4), TRANSITION_MOVE_RIGHT_STR) != 0 && 
 	   strcasecmp(token_getToken(tokens, 4), TRANSITION_STOP_STR) != 0){
-		return (-1);
+
+		return (DECODER_VERIFTRANSITION_ERROR_INVALIDMOVEMENT);
 	}
 
-	return (0);	
+	return (DECODER_VERIFTRANSITION_PASS);	
 
 }
 
-void decoder_setErrorInLine(uint64_t lineCounter){
-	//Seta o erro
-	char *errorStr = (char*)malloc(strlen(DECODER_EUSER_INVALID_LINE) + 25);
+void decoder_setErrorInLine(uint64_t lineCounter, char *aditionalStr){
+	
+	char *errorStr = (char*)malloc(strlen(DECODER_EUSER_INVALID_LINE_MSG) + 30 + 
+								   strlen(aditionalStr));
 
 	if(errorStr == NULL){
 		//Fudeu, deu erro dentro do erro! hahahah
@@ -224,12 +330,20 @@ void decoder_setErrorInLine(uint64_t lineCounter){
 MEMÓRIA!");
 		return;
 	}
-	
-	strncpy(errorStr, DECODER_EUSER_INVALID_LINE, 
-						strlen(DECODER_EUSER_INVALID_LINE) + 1);
 
-	snprintf(errorStr + strlen(DECODER_EUSER_INVALID_LINE), 24, "%lu", 
-					lineCounter);
+	strncpy(errorStr, DECODER_EUSER_INVALID_LINE_MSG, 
+						strlen(DECODER_EUSER_INVALID_LINE_MSG) + 1);
+	
+	if(aditionalStr == NULL){
+		snprintf(errorStr + strlen(DECODER_EUSER_INVALID_LINE_MSG), 29, "%lu", 
+						lineCounter);
+	}
+	else{
+		snprintf(errorStr + strlen(DECODER_EUSER_INVALID_LINE_MSG), 
+						29 + strlen(aditionalStr), "%lu\n%s", 
+						lineCounter, aditionalStr);
+
+	}
 
 	trgError_setDesc(errorStr);		
 

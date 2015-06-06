@@ -19,10 +19,10 @@ q2 b q8 b e
 q8 M q8 M e
 q8 H q8 H e
 q8 1 q8 1 e
-q8 b q9 1 e
 q8 0 q10 0 e
 q10 H q10 H e
 q10 M q10 M e
 q10 1 q10 1 e
 q10 0 q10 0 e
+q8 b q9 1 e
 q10 b q9 0 e

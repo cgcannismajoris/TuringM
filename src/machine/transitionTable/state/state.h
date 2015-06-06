@@ -53,7 +53,7 @@ typedef struct _state{
 
 STATE *state_new(char *name, int type);
 
-void state_free(STATE *state);
+void state_free(void *state);
 
 void state_addTransition(STATE *state, TRANSITION *transition);
 

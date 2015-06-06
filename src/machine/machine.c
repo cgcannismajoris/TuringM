@@ -42,7 +42,11 @@ MACHINE *machine_new(ALPHABET *inputAlphabet, ALPHABET *outputAlphabet,
 }
 
 void machine_free(MACHINE *machine){
-
+	alphabet_free(machine->inputAlphabet);
+	alphabet_free(machine->outputAlphabet);
+	table_free(machine->table);
+	tape_free(machine->tape);
+	free(machine);
 }
 
 int machine_run(MACHINE *machine){
@@ -78,10 +82,17 @@ int machine_run(MACHINE *machine){
 			tape_print(machine->tape);
 		}
 		else{
-				printf("MACHINE: TRANSIÇÃO INVÁLIDA!\n");
+				tape_print(machine->tape);
+				textcolor(RED);
+				printf("MACHINE: NÃO CHEGOU A UM ESTADO FINAL!\n");
+				textcolor(WHITE);
 				return (-1);
 		}
 	}
+
+	textcolor(GREEN);
+	printf("MACHINE: EXECUTADO COM SUCESSO!\n");
+	textcolor(WHITE);
 
 	return (0);
 }

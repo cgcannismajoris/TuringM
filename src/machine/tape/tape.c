@@ -39,14 +39,15 @@ TAPE *tape_new(char whiteChar){
 
 		return (NULL);
 	}
+
 	novo->whiteChar = whiteChar;	
 	novo->actualSymbol = lista_getRaiz(novo->tape);
-	
 	return (novo);
 }
 
 void tape_free(TAPE *tape){
-	
+	lista_free(tape->tape, free);
+	free(tape);
 }
 
 void tape_initialize(TAPE *tape, char *t){
@@ -118,7 +119,7 @@ void tape_print(TAPE *tape){
 //	lista_printLista(tape->tape, symbol_showNaTela);	
 	
 	tmp = lista_getRaiz(tape->tape);
-
+	
 	for(i = 0; i < lista_getQuant(tape->tape); i++){
 		
 		if(tmp == tape->actualSymbol){

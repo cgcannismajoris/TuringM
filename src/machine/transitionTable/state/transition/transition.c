@@ -64,12 +64,16 @@ TRANSITION *transition_new(char *actualState, char readChar, char *nextState,
 	return (novo);
 }
 
-void transition_free(TRANSITION *transition){
-	
+void _transition_free(TRANSITION *transition){
+
 	free(transition->actualState);
 	free(transition->nextState);
 	free(transition);
 
+}
+
+void transition_free(void *transition){
+	_transition_free((TRANSITION*)transition);
 }
 
 char *transition_getActualState(TRANSITION *transition){

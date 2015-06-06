@@ -36,9 +36,9 @@ LIST *lista_new(){
 	return (new);
 }
 
-LIST_INT lista_free(LISTA *this){
+LIST_INT lista_free(LISTA *this, void(*data_free)(void *)){
 	if(this != NULL){
-		lista_clear(this);
+		lista_clear(this, data_free);
 		free(this);
 		
 		return (LIST_SUCCESS);
@@ -47,18 +47,23 @@ LIST_INT lista_free(LISTA *this){
 	return (LIST_NULL_POINTER);
 }
 
-LIST_INT lista_clear(LISTA *this){
+LIST_INT lista_clear(LISTA *this, void(*data_free)(void *)){
 	
-	NODE *aux, *temp;
-	
+//	NODE *aux, *temp;
+
+	NODE *tmp;
+
 	if(this != NULL){
 
-		aux = lista_getLast(this);
-		while(aux != NULL){
-			temp = node_getAnte(aux);
-			node_free(aux); //Nao e necessario verificar o retorno de node_free
-							 //while ja garante a validade do no
-			aux = temp;
+//		aux = lista_getLast(this);
+//		while(aux != NULL){
+//			temp = node_getAnte(aux);
+//			node_free(aux, data_free); 	//Nao e necessario verificar o retorno de node_free
+//							 			//while ja garante a validade do no
+//			aux = temp;
+//		}
+		while((tmp = lista_removeRaiz(this)) != NULL){
+			node_free(tmp, data_free);
 		}
 
 		lista_setRaiz(this, NULL);

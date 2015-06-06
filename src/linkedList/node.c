@@ -68,15 +68,15 @@ NODE *node_new(void* data, GENERIC_UCHAR data_ID, NODE_UCINT node_ref_lenght){
 	return (new);
 }
 
-NODE_UINT node_free(NODE *this){
+NODE_UINT node_free(NODE *this, void(*data_free)(void*)){
 
 	NODE_UINT ref_lenght;
 
 	if(this != NULL){
-		
+
 		//Destruição do conteúdo interno do nó
 		//Destruição do dado armazenado
-		genericData_free( this->data );
+		genericData_free(this->data, data_free);
 
 		//Remoção das referências para as redondezas
 		for(ref_lenght = 0; ref_lenght < this->ref_lenght; ref_lenght++){

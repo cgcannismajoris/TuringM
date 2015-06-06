@@ -44,7 +44,6 @@ typedef struct _tape{
 	NODE *actualSymbol;
 
 	char whiteChar;
-	char startChar;
 
 } TAPE;
 

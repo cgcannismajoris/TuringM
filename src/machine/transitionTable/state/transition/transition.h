@@ -58,6 +58,8 @@ typedef struct _stateTransition{
 TRANSITION *transition_new(char *actualState, char readChar, char *nextState,
 							char writeChar, char move);
 
+void transition_free(void *transition);
+
 char *transition_getActualState(TRANSITION *transition);
 
 char transition_getReadChar(TRANSITION *transition);

@@ -45,7 +45,7 @@ typedef struct{
 
 GENERIC *genericData_new(void *data, GENERIC_UCHAR ID);
 
-GENERIC_INT genericData_free(GENERIC *this);
+GENERIC_INT genericData_free(GENERIC *this, void(*data_free)(void*));
 
 GENERIC_BOOL generic_isDataIDEqual(GENERIC *one, GENERIC *two);
 

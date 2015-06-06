@@ -44,6 +44,7 @@
 typedef struct _transitionTable{
 	
 	LIST *states; //Conteúdo do tipo STATE
+	uint64_t qtdTransitions;
 
 } TRANSITIONTABLE, TABLE;
 
@@ -60,6 +61,8 @@ TRANSITION *table_getTransition(TABLE *table, char *actualState, char readedChar
 STATE *table_getState(TABLE *table, char *state);
 
 STATE *table_getStartState(TABLE *table);
+
+uint64_t table_getQtdTransitions(TABLE *table);
 
 void table_print(TABLE *table);
 
