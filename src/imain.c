@@ -36,10 +36,13 @@ int main (int argc, char *argv[]){
 		printf("Copyright (C) 2015 Cristian Costa Mello and Gustavo \
 Freitas de Amorim\n\n");
 		printf("Linha de Comando:\n");
-		printf("TuringM <NOME_DO_ARQUIVO_DE_ENTRADA>\n\n");
+		printf("TuringM <NOME_DO_ARQUIVO_DE_ENTRADA> <QUANTIDADE_DE_FITAS>\n\n");
 		printf("Descrição dos Argumentos:\n");
 		printf("   <NOME_DO_ARQUIVO_DE_ENTRADA> : é um arquivo de \
-texto codificado no padrão ANSI ASCII;\n\n");
+texto codificado no padrão ANSI ASCII;\n");
+		printf("   <QUANTIDADE_DE_FITAS>        : quantidades de \
+fitas que serão utilizadas. Caso omitido,\n \
+                                 o valor assumido é 1.\n\n");
 		return (EXIT_SUCCESS);
 	}
 	//Se a quantidade de argumentos excede o limite...

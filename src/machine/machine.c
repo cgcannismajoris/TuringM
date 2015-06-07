@@ -72,10 +72,10 @@ int machine_run(MACHINE *machine){
 		transition = table_getTransition(machine->table, 
 							state_getName(actualState), 
 							(tmp = machine_readTapes(machine)));
-
 		if(tmp != NULL)
 			free(tmp);
 
+	
 		if(transition != NULL){		
 	
 			machine_writeTapes(machine, transition_getWriteChar(transition));
