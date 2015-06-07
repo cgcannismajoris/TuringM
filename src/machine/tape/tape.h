@@ -34,9 +34,14 @@
 
 #include "../../linkedList/linkedList.h"
 
+#include "../transitionTable/state/transition/transition.h"
 
 #define TAPE_EALLOC			NULL
 #define TAPE_EALLOC_MSG		"TAPE: Falha ao alocar memória."
+
+#define TAPE_MOVE_RIGHT		TRANSITION_MOVE_RIGHT
+#define TAPE_MOVE_LEFT		TRANSITION_MOVE_LEFT
+#define TAPE_STOP			TRANSITION_STOP
 
 typedef struct _tape{
 	
@@ -61,6 +66,8 @@ void tape_initialize(TAPE *tape, char *t);
 SYMBOL *tape_moveRight(TAPE *tape);
 
 SYMBOL *tape_moveLeft(TAPE *tape);
+
+SYMBOL *tape_move(TAPE *tape, char movement);
 
 SYMBOL *tape_getActual(TAPE *tape);
 

@@ -50,7 +50,12 @@ para mais informações.\n");
 		return (EXIT_FAILURE);
 	}
 	
-	turing_run(argv[1]);	
+	if(argc == 2){
+		turing_run(argv[1], 1);
+	}	
+	else{
+		turing_run(argv[1], atoi(argv[2]));
+	}
 
 	return EXIT_SUCCESS;
 }

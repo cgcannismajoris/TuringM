@@ -82,9 +82,9 @@ void state_setType(STATE *state, int type){
 	state->type = type;
 }
 
-TRANSITION *state_getTransition(STATE *state, char readedChar){
+TRANSITION *state_getTransition(STATE *state, char *readedChars){
 
-	NODE *no = lista_search(state->transitions, &readedChar, transition_cmpReadChar);
+	NODE *no = lista_search(state->transitions, readedChars, transition_cmpReadChar);
 	return (node_getData(no));
 }
 
@@ -98,6 +98,10 @@ int state_isThisType(const void *type, const void *state){
 
 void state_print(void *state){
 	printf("NAME = %s\n", ((STATE*)state)->name);
+	printf("TYPE = %s\n", 
+					((STATE*)state)->type == STATE_TYPE_START ? 
+					"START" : ((STATE*)state)->type == STATE_TYPE_INTERMEDIARY ? 
+					"INTERMEDIARY" : "FINAL");
 	lista_printLista(((STATE*)state)->transitions, transition_print);
 	printf("\n");
 }

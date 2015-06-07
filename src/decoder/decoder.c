@@ -23,7 +23,8 @@
 #include "decoder.h"
 
 #include <stdio.h>
-MACHINE *decoder_decode(char *filename){
+
+MACHINE *decoder_decode(char *filename, uint32_t qtdTapes){
 
 	char *line = NULL;
 	char *tmpStr;
@@ -39,7 +40,7 @@ MACHINE *decoder_decode(char *filename){
 	ALPHABET *outputAlphabet;
 	TRANSITIONTABLE *table;
 	TRANSITION *transition;
-	TAPE *tape;
+	TAPE **tapes;
 	char whiteChar;
 
 	MACHINE *machine;
@@ -94,7 +95,7 @@ MACHINE *decoder_decode(char *filename){
 
 	//Obtém a lista de todos os estados
 	table = decoder_loadAllStates(loader, &lineCounter, token_getToken(token, 1));
-	
+
 	if(table == NULL){
 		//O erro já foi setado em decoder_loadAllStates
 		//Basta limpar a memória
@@ -106,11 +107,9 @@ MACHINE *decoder_decode(char *filename){
 		return (NULL);
 	}
 
-	//Obtém o estado inicial da fita
-	tape = decoder_getTape(loader, &lineCounter, whiteChar);
-	if(table == NULL){
-		//O erro já foi setado em decoder_loadAllStates
-		//Basta limpar a memória
+	//Obtém o estado inicial das fitas
+	tapes = decoder_getTapes(loader, &lineCounter, qtdTapes, whiteChar);
+	if(tapes == NULL){
 
 		alphabet_free(inputAlphabet);
 		alphabet_free(outputAlphabet);
@@ -120,38 +119,47 @@ MACHINE *decoder_decode(char *filename){
 	}
 
 	//Obtém a tabela de transições
-	table = decoder_getTransitionTable(loader, &lineCounter, inputAlphabet, 
-														outputAlphabet, table);
+	table = decoder_getTransitionTable(loader, &lineCounter, qtdTapes,
+									   inputAlphabet, outputAlphabet, table);
+
 	if(table == NULL){
+
 		alphabet_free(inputAlphabet);
 		alphabet_free(outputAlphabet);
+		
+		for(qtdTapes; qtdTapes > 0; qtdTapes--){
+			tape_free(tapes[qtdTapes - 1]);
+		}
+		free(tapes);
+		
 		trgLoader_free(loader);
+		
 		return (NULL);
 	}
 
-	machine = machine_new(inputAlphabet, outputAlphabet, whiteChar, table, tape);
+	machine = machine_new(inputAlphabet, outputAlphabet, whiteChar, table, tapes, qtdTapes);
 
 	return (machine);
 }
 
 TABLE *decoder_getTransitionTable(TRGLOADER *loader, uint64_t *lineCounter, 
-								ALPHABET *inputAlphabet, ALPHABET *outputAlphabet, 
-								TABLE *table){
+								  uint32_t qtdTapes, ALPHABET *inputAlphabet, 
+								  ALPHABET *outputAlphabet, TABLE *table){
 	
 	TOKENS *token;
 	TRANSITION *transition;	
 
 	while((token = decoder_getNextLineTokens(loader, lineCounter)) != NULL){
-		if(decoder_verifTransition(token, inputAlphabet, outputAlphabet) != 0){
+		
+		if(decoder_verifTransition(token, qtdTapes, table, inputAlphabet, 
+																outputAlphabet) != 0){
 			token_free(token);
 			decoder_setErrorInLine(*lineCounter, DECODER_EUSER_INVALIDTRANSITION_MSG);
 			table_free(table);
 			return (NULL);
 		}
-	
-		transition = transition_new(token_getToken(token, 0), 
-						token_getToken(token, 1)[0], token_getToken(token, 2), 
-						token_getToken(token, 3)[0], token_getToken(token, 4)[0]);
+		
+		transition = decoder_makeTransition(token, qtdTapes);
 		
 		if(table_addTransition(table, transition) != TABLE_SUCCESS){
 			trgError_setDesc(DECODER_EUSER_STATE_UNDECLARED_MSG);
@@ -159,34 +167,97 @@ TABLE *decoder_getTransitionTable(TRGLOADER *loader, uint64_t *lineCounter,
 			table_free(table);
 			return (NULL);
 		}
-
-		token_free(token);
+//		token_free(token);
 	}
+
 	//Se não foram inseridas transições...	
 	if(table_getQtdTransitions(table) == 0){
 		trgError_setDesc(DECODER_EUSER_TRANSITIONSNOTDECLARED_MSG);
 		table_free(table);
-		table = NULL;
+		return (NULL);
 	}
 
 	return (table);
 }
 
-TAPE *decoder_getTape(TRGLOADER *loader, uint64_t *lineCounter, char whiteChar){
+TRANSITION *decoder_makeTransition(TOKENS *tokens, uint32_t qtdTapes){
+	
+	TRANSITION *transition;
 
-	TAPE *tape;
+	uint32_t i;
+
+	char *readChars;
+	char *writeChars;
+	char *movements;
+	
+	if((readChars = (char*)malloc(sizeof(char) * qtdTapes)) == NULL){
+		return (NULL);
+	}
+
+	if((writeChars = (char*)malloc(sizeof(char) * qtdTapes)) == NULL){
+		free(readChars);
+		return (NULL);
+	}
+	
+	if((movements = (char*)malloc(sizeof(char) * qtdTapes)) == NULL){
+		free(readChars);
+		free(writeChars);
+		return (NULL);
+	}
+
+	for(i = 1; i <= qtdTapes; i++){
+		readChars[i - 1] = token_getToken(tokens, i)[0];
+		writeChars[i - 1] = token_getToken(tokens, i + qtdTapes + 1)[0];
+		movements[i - 1] = token_getToken(tokens, i + (2 * qtdTapes) + 1)[0];
+	}
+	
+	transition = transition_new(token_getToken(tokens, 0), readChars, 
+								token_getToken(tokens, qtdTapes + 1),
+								writeChars, movements, qtdTapes);
+
+	free(readChars);
+	free(writeChars);
+	free(movements);
+
+	return (transition);
+}
+
+TAPE **decoder_getTapes(TRGLOADER *loader, uint64_t *lineCounter, uint32_t qtdTapes, char whiteChar){
+
+	TAPE **tapes;
 	TOKENS *token;
-	if((tape = tape_new(whiteChar)) == NULL){
+	uint32_t counter;
+
+	if((tapes = (TAPE**)malloc(sizeof(TAPE*))) == NULL){
 		return (NULL);
 	}
 
-	if((token = decoder_getNextLineTokens(loader, lineCounter)) == NULL){
-		return (NULL);
+	for(counter = 0; counter < qtdTapes; counter++){
+
+		if((tapes[counter] = tape_new(whiteChar)) == NULL){
+			
+			for(counter - 1; counter > 0; counter--){
+				tape_free(tapes[counter]);
+			}
+			free(tapes);
+
+			return (NULL);
+		}
+	
+		if((token = decoder_getNextLineTokens(loader, lineCounter)) == NULL){
+		
+			for(counter - 1; counter > 0; counter--){
+				tape_free(tapes[counter]);
+			}
+			free(tapes);
+
+			return (NULL);
+		}
+	
+		tape_initialize(tapes[counter], token_toStringWithoutSeparator(token));
 	}
 
-	tape_initialize(tape, token_toStringWithoutSeparator(token));
-
-	return (tape);
+	return (tapes);
 }
 
 TABLE *decoder_loadAllStates(TRGLOADER *loader, uint64_t *lineCounter, char *startState){
@@ -269,10 +340,12 @@ ALPHABET *decoder_getAlphabet(TRGLOADER *loader, uint64_t *lineCounter){
 TOKENS *decoder_getNextLineTokens(TRGLOADER *loader, uint64_t *lineCounter){
 
 	TOKENS *token = NULL;
-	char *line = trgLoader_getLine(loader);
+	char *line;
 
+	line = trgLoader_getLine(loader);
+	
 	(*lineCounter)++;
-
+	
 	if(line != NULL){
 		token = scanner_scan(line, NULL, DECODER_TOKEN_SEPARATOR, 0);
 	}
@@ -288,35 +361,53 @@ int decoder_verifChr(char *token){
 	return (0);
 }
 
-int decoder_verifTransition(TOKENS *tokens, ALPHABET *inputAlphabet, 
-												ALPHABET *outputAlphabet){
+int decoder_verifTransition(TOKENS *tokens, uint32_t qtdTapes, TABLE *table, 
+							ALPHABET *inputAlphabet, ALPHABET *outputAlphabet){
 
-	if(token_getQtd(tokens) != 5){
+	uint32_t i;
+
+	if(token_getQtd(tokens) != (2 + 3 * qtdTapes)){ 
 		return (DECODER_VERIFTRANSITION_ERROR_INVALIDQTD);
 	}
+	
+	for(i = 1; i <= qtdTapes; i++){
+		//Verifica se os simbolos e movimentos possuem apenas um caractere
+		if(strlen(token_getToken(tokens, i)) != 1 ||
+		   strlen(token_getToken(tokens, i + qtdTapes + 1)) != 1 ||
+		   strlen(token_getToken(tokens, i + (2 * qtdTapes) + 1)) != 1){
+	
+			return (DECODER_VERIFTRANSITION_ERROR_INVALIDARGUMENT);
+		}
 
-	if(strlen(token_getToken(tokens, 1)) != 1 ||
-	   strlen(token_getToken(tokens, 3)) != 1 || 
-	   strlen(token_getToken(tokens, 4)) != 1){
+		//Verifica se os símbolos estão presentes nos alfabetos
+		if(alphabet_verif(inputAlphabet, token_getToken(tokens, i)[0]) < 0 ||
+	alphabet_verif(outputAlphabet, token_getToken(tokens, i + qtdTapes + 1)[0]) < 0){
 
-		return (DECODER_VERIFTRANSITION_ERROR_INVALIDARGUMENT);
+			return (DECODER_VERIFTRANSITION_ERROR_CHRNOTINALPHABET);
+		}
+		
+		//Verifica se os movimentos definidos são válidos
+		if(strcasecmp(token_getToken(tokens, i + (2 * qtdTapes) + 1), 
+													TRANSITION_MOVE_LEFT_STR) != 0 && 
+		   strcasecmp(token_getToken(tokens, i + (2 * qtdTapes) + 1), 
+				   								TRANSITION_MOVE_RIGHT_STR) != 0 && 
+		   strcasecmp(token_getToken(tokens, i + (2 * qtdTapes) + 1), 
+				   									TRANSITION_STOP_STR) != 0){
+
+			return (DECODER_VERIFTRANSITION_ERROR_INVALIDMOVEMENT);
+		}
 	}
 	
-	if(alphabet_verif(inputAlphabet, token_getToken(tokens, 1)[0]) < 0 ||
-	   alphabet_verif(outputAlphabet, token_getToken(tokens, 3)[0]) < 0){
-
-		return (DECODER_VERIFTRANSITION_ERROR_CHRNOTINALPHABET);
-	}
-	
-	if(strcasecmp(token_getToken(tokens, 4), TRANSITION_MOVE_LEFT_STR) != 0 && 
-	   strcasecmp(token_getToken(tokens, 4), TRANSITION_MOVE_RIGHT_STR) != 0 && 
-	   strcasecmp(token_getToken(tokens, 4), TRANSITION_STOP_STR) != 0){
-
-		return (DECODER_VERIFTRANSITION_ERROR_INVALIDMOVEMENT);
+	//Verifica se o estado atual é válido
+	if(table_getState(table, token_getToken(tokens, 0)) == NULL){
+		return (DECODER_VERIFTRANSITION_ERROR_UNDECLAREDSTATE);
+	}	
+	//Verifica se o estado destido é válido
+	if(table_getState(table, token_getToken(tokens, qtdTapes + 1)) == NULL){
+		return (DECODER_VERIFTRANSITION_ERROR_UNDECLAREDSTATE);
 	}
 
 	return (DECODER_VERIFTRANSITION_PASS);	
-
 }
 
 void decoder_setErrorInLine(uint64_t lineCounter, char *aditionalStr){

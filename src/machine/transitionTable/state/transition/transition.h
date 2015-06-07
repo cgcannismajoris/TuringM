@@ -48,29 +48,33 @@
 typedef struct _stateTransition{
 
 	char *actualState;
-	char readChar;
+	char *readChar;
 	char *nextState;
-	char writeChar;
-	char move;
+	char *writeChar;
+	char *move;
+
+	uint32_t qtdTapes;
 
 } STATETRANSITION, TRANSITION;
 
-TRANSITION *transition_new(char *actualState, char readChar, char *nextState,
-							char writeChar, char move);
+TRANSITION *transition_new(char *actualState, char *readChar, char *nextState,
+							char *writeChar, char *move, uint32_t qtdTapes);
 
 void transition_free(void *transition);
 
 char *transition_getActualState(TRANSITION *transition);
 
-char transition_getReadChar(TRANSITION *transition);
+char *transition_getReadChar(TRANSITION *transition);
 
 char *transition_getNextState(TRANSITION *transition);
 
-char transition_getWriteChar(TRANSITION *transition);
+char *transition_getWriteChar(TRANSITION *transition);
 
-char transition_getMove(TRANSITION *transition);
+char *transition_getMove(TRANSITION *transition);
 
-int transition_cmpReadChar(const void *chr, const void *transition);
+int transition_cmpReadChar(const void *chars, const void *transition);
+
+uint32_t transition_getQtdTapes(TRANSITION *transition);
 
 void transition_print(void *transition);
 #endif

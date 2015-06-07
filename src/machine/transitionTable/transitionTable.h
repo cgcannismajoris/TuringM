@@ -56,7 +56,7 @@ int table_addState(TABLE *table, STATE *state);
 
 int table_addTransition(TABLE *table, TRANSITION *transition);
 
-TRANSITION *table_getTransition(TABLE *table, char *actualState, char readedChar);
+TRANSITION *table_getTransition(TABLE *table, char *actualState, char *readedChars);
 
 STATE *table_getState(TABLE *table, char *state);
 

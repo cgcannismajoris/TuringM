@@ -29,6 +29,6 @@
 #define TURINGM_DECODER_ERROR_MSG	"TURINGM: Falha ao decodificar arquivo de entrada."
 
 
-int turing_run(char *file);
+int turing_run(char *file, uint32_t qtdTapes);
 
 #endif

@@ -22,14 +22,14 @@
 
 #include "TuringM.h"
 #include <stdio.h>
-int turing_run(char *file){
+int turing_run(char *file, uint32_t qtdTapes){
 
 	MACHINE *machine = NULL;
 	
 	trgError_new(512);
 
 	//Se ocorrer erro no processamento
-	if((machine = decoder_decode(file)) == NULL){
+	if((machine = decoder_decode(file, qtdTapes)) == NULL){
 		printf("%s\n", trgError_getDesc());
 		printf(TURINGM_DECODER_ERROR_MSG);
 		printf("\n");

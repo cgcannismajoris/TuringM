@@ -55,14 +55,21 @@
 #define DECODER_VERIFTRANSITION_ERROR_INVALIDARGUMENT	-2
 #define DECODER_VERIFTRANSITION_ERROR_CHRNOTINALPHABET	-3
 #define DECODER_VERIFTRANSITION_ERROR_INVALIDMOVEMENT	-4
+#define DECODER_VERIFTRANSITION_ERROR_UNDECLAREDSTATE	-5
 
-MACHINE *decoder_decode(char *filename);
+MACHINE *decoder_decode(char *filename, uint32_t qtdTapes);
 
-TABLE *decoder_getTransitionTable(TRGLOADER *loader, uint64_t *lineCounter, 
+TABLE *decoder_getTransitionTable(TRGLOADER *loader, uint64_t *lineCounter, uint32_t qtdTapes, 
 								ALPHABET *inputAlphabet, ALPHABET *outputAlphabet, 
 								TABLE *table);
 
-TAPE *decoder_getTape(TRGLOADER *loader, uint64_t *lineCounter, char whiteChar);
+TRANSITION *decoder_getTransition(TRGLOADER *loader, uint64_t *lineCounter, uint32_t qtdTapes,
+								  ALPHABET *inputAlphabet, ALPHABET *outputAlphabet,
+								  TABLE *table);
+
+TRANSITION *decoder_makeTransition(TOKENS *token, uint32_t qtdTapes);
+
+TAPE **decoder_getTapes(TRGLOADER *loader, uint64_t *lineCounter, uint32_t qtdTapes, char whiteChar);
 
 TABLE *decoder_loadAllStates(TRGLOADER *loader, uint64_t *lineCounter, char *startState);
 
@@ -76,8 +83,8 @@ TOKENS *decoder_getNextLineTokens(TRGLOADER *loader, uint64_t *lineCounter);
 
 int decoder_verifChr(char *token);
 
-int decoder_verifTransition(TOKENS *tokens, ALPHABET *inputAlphabet, 
-												ALPHABET *outputAlphabet);
+int decoder_verifTransition(TOKENS *tokens, uint32_t qtdTapes, TABLE *table, 
+							ALPHABET *inputAlphabet, ALPHABET *outputAlphabet);
 
 void decoder_setErrorInLine(uint64_t lineCounter, char *aditionalStr);
 

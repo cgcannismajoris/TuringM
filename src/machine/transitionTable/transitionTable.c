@@ -62,15 +62,6 @@ int table_addTransition(TABLE *table, TRANSITION *transition){
 	STATE *state = table_getState(table, transition_getActualState(transition));
 	
 	if(state == NULL){
-		//Cria um novo estado
-		/* 
-		if((state = state_new(transition_getActualState(transition), 
-								STATE_TYPE_INTERMEDIARY)) == NULL){
-			return (TABLE_ERROR);
-		}
-		
-		table_addState(table, state);
-		*/
 		return (TABLE_ERROR);
 	}
 
@@ -79,7 +70,7 @@ int table_addTransition(TABLE *table, TRANSITION *transition){
 	return (TABLE_SUCCESS);
 }
 
-TRANSITION *table_getTransition(TABLE *table, char *actualState, char readedChar){
+TRANSITION *table_getTransition(TABLE *table, char *actualState, char *readedChars){
 
 	TRANSITION *transition = NULL;
 	STATE *state = table_getState(table, actualState);
@@ -88,7 +79,8 @@ TRANSITION *table_getTransition(TABLE *table, char *actualState, char readedChar
 		return (NULL);
 	}
 
-	transition = state_getTransition(state, readedChar);
+	transition = state_getTransition(state, readedChars);
+
 	return (transition);
 
 }
@@ -114,5 +106,9 @@ uint64_t table_getQtdTransitions(TABLE *table){
 }
 
 void table_print(TABLE *table){
+	printf("TABELA DE TRANSIÇÕES:\n");
+	printf("QTD_TRANSITIONS = %lu\n", table->qtdTransitions);
+	printf("Lista de estados e transições:\n");
 	lista_printLista(table->states, state_print);
 }
+

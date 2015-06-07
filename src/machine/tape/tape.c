@@ -91,6 +91,21 @@ SYMBOL *tape_moveLeft(TAPE *tape){
 	return (node_getData(tape->actualSymbol));
 }
 
+SYMBOL *tape_move(TAPE *tape, char movement){
+	switch(movement){
+		case (TAPE_MOVE_RIGHT):
+		case (TAPE_MOVE_RIGHT + 32):
+			return (tape_moveRight(tape));
+
+		case (TAPE_MOVE_LEFT):
+		case (TAPE_MOVE_LEFT + 32):
+			return (tape_moveLeft(tape));
+
+		default:
+			return (tape_getActual(tape));
+	}
+}
+
 SYMBOL *tape_getActual(TAPE *tape){
 	return (node_getData(tape->actualSymbol));
 }

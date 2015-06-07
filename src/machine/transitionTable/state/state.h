@@ -63,11 +63,12 @@ int state_getType(STATE *state);
 
 void state_setType(STATE *state, int type);
 
-TRANSITION *state_getTransition(STATE *state, char readedChar);
+TRANSITION *state_getTransition(STATE *state, char *readedChars);
 
 int state_cmpName(const void *name, const void *state);
 
 int state_isThisType(const void *type, const void *state);
 
 void state_print(void *state);
+
 #endif

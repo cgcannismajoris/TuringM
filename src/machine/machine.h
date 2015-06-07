@@ -44,15 +44,26 @@ typedef struct _machine {
 
 	TABLE *table;
 
-	TAPE *tape;	
+	TAPE **tapes;	
+	
+	uint32_t qtdTapes;
 
 } MACHINE;
 
 MACHINE *machine_new(ALPHABET *inputAlphabet, ALPHABET *outputAlphabet, 
-						char whiteChar, TABLE *table, TAPE *tape);
+						char whiteChar, TABLE *table, TAPE **tapes, 
+						uint32_t qtdTapes);
 
 void machine_free(MACHINE *machine);
 
 int machine_run(MACHINE *machine);
+
+char *machine_readTapes(MACHINE *machine);
+
+void machine_writeTapes(MACHINE *machine, char *toWrite);
+
+void machine_moveTapes(MACHINE *machine, char *movements);
+
+void machine_printTapes(MACHINE *machine);
 
 #endif

@@ -23,17 +23,18 @@
 
 #include "transition.h"
 
-TRANSITION *transition_new(char *actualState, char readChar, char *nextState,
-							char writeChar, char move){
+TRANSITION *transition_new(char *actualState, char *readChar, char *nextState,
+							char *writeChar, char *move, uint32_t qtdTapes){
 	
 	TRANSITION *novo = NULL;
+	uint32_t counter;
 
 	if((novo = (TRANSITION*)malloc(sizeof(TRANSITION))) == NULL){
 		trgError_setDesc(TRANSITION_EALLOC_MSG);
 		return (NULL);
 	}
 
-	if((novo->actualState = (char*)malloc(strlen(actualState) + 1)) == NULL){
+	if((novo->actualState = (char*)malloc(sizeof(char) * (strlen(actualState) + 1))) == NULL){
 
 		free(novo);
 
@@ -41,7 +42,7 @@ TRANSITION *transition_new(char *actualState, char readChar, char *nextState,
 		return (NULL);
 	}
 
-	if((novo->nextState = (char*)malloc(strlen(nextState) + 1)) == NULL){
+	if((novo->readChar = (char*)malloc(sizeof(char) * qtdTapes)) == NULL){
 
 		free(novo->actualState);
 		free(novo);
@@ -49,17 +50,57 @@ TRANSITION *transition_new(char *actualState, char readChar, char *nextState,
 		trgError_setDesc(TRANSITION_EALLOC_MSG);
 		return (NULL);
 	}
-	
-	//Faz com que o idicador de movimento esteja dentro do padrão (maiúsculo)	
-	if(move > 80)
-		move = move - 32;
 
-	novo->move = move;
-	novo->readChar = readChar;
-	novo->writeChar = writeChar;
+	if((novo->nextState = (char*)malloc(sizeof(char) * (strlen(nextState) + 1))) == NULL){
+
+		free(novo->actualState);
+		free(novo->readChar);
+		free(novo);
+
+		trgError_setDesc(TRANSITION_EALLOC_MSG);
+		return (NULL);
+	}
+
+
+	if((novo->writeChar = (char*)malloc(sizeof(char) * qtdTapes)) == NULL){
+
+		free(novo->actualState);
+		free(novo->readChar);
+		free(novo->nextState);
+		free(novo);
+
+		trgError_setDesc(TRANSITION_EALLOC_MSG);
+		return (NULL);
+	}
+
+	if((novo->move = (char*)malloc(sizeof(char) * qtdTapes)) == NULL){
+
+		free(novo->actualState);
+		free(novo->readChar);
+		free(novo->nextState);
+		free(novo->move);
+		free(novo);
+
+		trgError_setDesc(TRANSITION_EALLOC_MSG);
+		return (NULL);
+	}
+
+	//Faz com que o idicador de movimento esteja dentro do padrão (maiúsculo)	
+	for(counter = 0; counter < qtdTapes; counter++){
+		if((novo->move)[counter] > 80){
+			(novo->move)[counter] = (novo->move)[counter] - 32;
+		}
+	}
+	
+
+	memcpy(novo->move, move, qtdTapes);
+	memcpy(novo->readChar, readChar, qtdTapes);
+	memcpy(novo->writeChar, writeChar, qtdTapes);
 
 	strcpy(novo->actualState, actualState);
 	strcpy(novo->nextState, nextState);
+
+	novo->qtdTapes = qtdTapes;
 
 	return (novo);
 }
@@ -67,7 +108,10 @@ TRANSITION *transition_new(char *actualState, char readChar, char *nextState,
 void _transition_free(TRANSITION *transition){
 
 	free(transition->actualState);
+	free(transition->readChar);
 	free(transition->nextState);
+	free(transition->writeChar);
+	free(transition->move);
 	free(transition);
 
 }
@@ -80,7 +124,7 @@ char *transition_getActualState(TRANSITION *transition){
 	return (transition->actualState);
 }
 
-char transition_getReadChar(TRANSITION *transition){
+char *transition_getReadChar(TRANSITION *transition){
 	return (transition->readChar);
 }
 
@@ -88,22 +132,47 @@ char *transition_getNextState(TRANSITION *transition){
 	return (transition->nextState);
 }
 
-char transition_getWriteChar(TRANSITION *transition){
+char *transition_getWriteChar(TRANSITION *transition){
 	return (transition->writeChar);
 }
 
-char transition_getMove(TRANSITION *transition){
+char *transition_getMove(TRANSITION *transition){
 	return (transition->move);
 }
 
-int transition_cmpReadChar(const void *chr, const void *transition){
-	return (*((char*)chr) - (((TRANSITION*)transition)->readChar)); 
+uint32_t transition_getQtdTapes(TRANSITION *transition){
+	return (transition->qtdTapes);
+}
+
+int transition_cmpReadChar(const void *chars, const void *transition){
+	return (strncmp(chars, ((TRANSITION*)transition)->readChar, ((TRANSITION*)transition)->qtdTapes));
 }
 
 void transition_print(void *transition){
 	
-	TRANSITION *t = transition;
+	uint32_t i;
 
-	printf("STATE\t\t= %s\nREAD_CHR\t= %c\nNEXT_STATE\t= %s\nTO_WRITE_CHR\t= %c\nMOVEMENT\t= %c\n", t->actualState, t->readChar, t->nextState, t->writeChar, t->move);
+	printf("  STATE\t\t= %s\n", ((TRANSITION*)transition)->actualState);
+	
+	printf("  READ_CHR\t= ");
+	for(i = 0; i < ((TRANSITION*)transition)->qtdTapes; i++){
+		printf("%c ", ((TRANSITION*)transition)->readChar[i]);
+	}
+	printf("\n");
 
+	printf("  NEXT_STATE\t= %s\n", ((TRANSITION*)transition)->nextState);
+
+	printf("  WRITE_CHR\t= ");
+	for(i = 0; i < ((TRANSITION*)transition)->qtdTapes; i++){
+		printf("%c ", ((TRANSITION*)transition)->writeChar[i]);
+	}
+	printf("\n");
+
+	printf("  MOVEMENT\t= ");
+	for(i = 0; i < ((TRANSITION*)transition)->qtdTapes; i++){
+		printf("%c ", ((TRANSITION*)transition)->move[i]);
+	}
+	printf("\n");
+
+	printf("  QTD_TAPES\t= %u\n\n", ((TRANSITION*)transition)->qtdTapes);
 }

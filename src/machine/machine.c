@@ -23,7 +23,8 @@
 #include "machine.h"
 
 MACHINE *machine_new(ALPHABET *inputAlphabet, ALPHABET *outputAlphabet, 
-						char whiteChar, TABLE *table, TAPE *tape){
+						char whiteChar, TABLE *table, TAPE **tapes, 
+						uint32_t qtdTapes){
 
 	MACHINE *novo;
 
@@ -36,25 +37,33 @@ MACHINE *machine_new(ALPHABET *inputAlphabet, ALPHABET *outputAlphabet,
 	novo->outputAlphabet = outputAlphabet;
 	novo->whiteChar = whiteChar;
 	novo->table = table;
-	novo->tape = tape;
+	novo->tapes = tapes;
+	novo->qtdTapes = qtdTapes;
 
 	return (novo);
 }
 
 void machine_free(MACHINE *machine){
+	
 	alphabet_free(machine->inputAlphabet);
 	alphabet_free(machine->outputAlphabet);
 	table_free(machine->table);
-	tape_free(machine->tape);
+
+	//Desaloca as fitas
+	for(machine->qtdTapes; machine->qtdTapes > 0; (machine->qtdTapes)--){
+		tape_free((machine->tapes)[(machine->qtdTapes) - 1]);
+	}
+	
 	free(machine);
 }
 
 int machine_run(MACHINE *machine){
 
+	char *tmp;
 	TRANSITION *transition;
 	STATE *actualState;	
 
-	tape_print(machine->tape);
+	machine_printTapes(machine);
 
 	actualState = table_getStartState(machine->table);
 
@@ -62,27 +71,24 @@ int machine_run(MACHINE *machine){
 
 		transition = table_getTransition(machine->table, 
 							state_getName(actualState), 
-							tape_read(machine->tape));
+							(tmp = machine_readTapes(machine)));
 
-		if(transition != NULL){
-			
-			tape_write(machine->tape, transition_getWriteChar(transition));
+		if(tmp != NULL)
+			free(tmp);
+
+		if(transition != NULL){		
 	
-			switch(transition_getMove(transition)){
-				case TRANSITION_MOVE_RIGHT:
-					tape_moveRight(machine->tape);
-					break;
+			machine_writeTapes(machine, transition_getWriteChar(transition));
 	
-				case TRANSITION_MOVE_LEFT:
-					tape_moveLeft(machine->tape);
-					break;
-			}
-	
-			actualState = table_getState(machine->table, transition_getNextState(transition));
-			tape_print(machine->tape);
+			machine_moveTapes(machine, transition_getMove(transition));	
+
+			actualState = table_getState(machine->table, 
+												transition_getNextState(transition));
+			machine_printTapes(machine);
 		}
+
 		else{
-				tape_print(machine->tape);
+				machine_printTapes(machine);
 				textcolor(RED);
 				printf("MACHINE: NÃO CHEGOU A UM ESTADO FINAL!\n");
 				textcolor(WHITE);
@@ -97,3 +103,50 @@ int machine_run(MACHINE *machine){
 	return (0);
 }
 
+char *machine_readTapes(MACHINE *machine){
+	
+	char *readed;
+	uint32_t counter;
+
+	if((readed = (char*)malloc(sizeof(char) * (machine->qtdTapes))) == NULL){
+		trgError_setDesc(MACHINE_EALLOC_MSG);
+		return (NULL);
+	}
+
+	for(counter = 0; counter < machine->qtdTapes; counter++){
+		readed[counter] = tape_read((machine->tapes)[counter]);
+	}
+
+	return (readed);
+}
+
+void machine_writeTapes(MACHINE *machine, char *toWrite){
+
+	uint32_t counter;
+
+	for(counter = 0; counter < machine->qtdTapes; counter++){
+		tape_write((machine->tapes)[counter], toWrite[counter]);
+	}
+
+}
+
+void machine_moveTapes(MACHINE *machine, char *movements){
+
+	uint32_t counter;
+
+	for(counter = 0; counter < machine->qtdTapes; counter++){
+		tape_move((machine->tapes)[counter], movements[counter]);
+	}
+}
+
+void machine_printTapes(MACHINE *machine){
+
+	uint32_t counter;
+
+	for(counter = 0; counter < machine->qtdTapes; counter++){
+		printf("FITA %u: ", counter);
+		tape_print((machine->tapes)[counter]);
+	}
+	printf("\n");
+
+}
