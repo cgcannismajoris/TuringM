@@ -3,6 +3,7 @@ Um simulador da máquina universal conceitual de Turing.
 
 ##O que ele faz?
 Realiza a simulação da execução de um autômato descrito por uma tabela em uma máquina de turing.
+É permitido o uso de mais de uma fita.
 
 ##Requisitos recomendados
 * Sistema Operacional Unix-like ou GNU/Linux mais recente;
@@ -29,7 +30,7 @@ Estando-se na pasta pai do projeto ("/TuringM"), realize o comando abaixo:
 ##Procedimentos de utilização via Terminal
 Através de um terminal de comando do Linux, observa-se o formato de entrada abaixo:
 
-	$ ./bin/TuringM <ARQUIVO_ENTRADA>
+	$ ./bin/TuringM <ARQUIVO_ENTRADA> <QUANTIDADE_DE_FITAS>
 	
 Descrição dos argumentos: 
 
@@ -45,34 +46,36 @@ Descrição dos argumentos:
 		                                       que são finais;
 		                       Sexta linha   : Deve conter a configuração inicial da fita;
 		                       A paritr da sétima linha deve ser escrita a tabela de transições.
-		                      
+		                       
+	<QUANTIDADE_DE_FITAS>    : quantidade de fitas a serem utilizadas. É opicional. Caso omitido, a quantidade
+				   assumida é 1.
 
 A tabela de transições deve respeitar a seguinte forma:
 ```
-  <Estado atual> <Símbolo lido> <Próximo estado> <Símbolo a ser escrito> <Movimento>
+  <Estado atual> <Símbolo lido fita 0> <Símbolo lido fita 1> ... <Símbolo lido fita n> <Próximo estado> <Símbolo a ser escrito fita 0> <Símbolo a ser escrito fita 1> ... <Símbolo a ser escrito fita n> <Movimento fita 0> <Movimento fita 1> ... <Movimento fita n> 
 ```
 
 Onde:
 
 ```
-  <Estado atual>         : Estado atual da máquina;
-  <Símbolo lido>         : Símbolo a ser lido;
-  <Próximo estado>       : Próximo estado caso o descrito símbolo seja lido;
-  <Símbolo a ser escrito>: Símbolo a ser escrito na fita, caso a transição ocorra;
-  <Movimento>            : Movimento da fita, onde:
-                           D ou d - Direita;
-                           E ou e - Esquerda;
-                           P ou p - Não mover a fita.
+  <Estado atual>                : Estado atual da máquina;
+  <Símbolo lido fita i>         : Símbolo a ser lido na fita i;
+  <Próximo estado>              : Próximo estado caso o descrito símbolo seja lido;
+  <Símbolo a ser escrito fita i>: Símbolo a ser escrito na fita i, caso a transição ocorra;
+  <Movimento fita i>            : Movimento da fita i, onde:
+                                    D ou d - Direita;
+                                    E ou e - Esquerda;
+                                    P ou p - Não mover a fita.
 ```
 
 A chamada do programa sem argumentos resultará na exibição de uma descrição simplificada da lista de argumentos.
                                
 Se a decodificação do arquivo for bem sucedida, o simulador irá iniciar a execução exibindo, a cada transição
-de estados, a fita com a posição atual na cor VERDE.
+de estados, as fitas com a posição atual na cor VERDE.
 
 ###Exemplo de Arquivo de Entrada
 
-O input a seguir faz a detecção de padrões dentro da fita.
+O input a seguir faz a detecção de padrões dentro de uma única fita.
 A fita começa em @ e contém uma sequencia de H, M e b (símbolo branco).
 Caso encontre um H seguido de M ou o inverso, escreve 1 no símbolo b após o par.
 Caso encontre uma repetição de dois Hs ou dois Ms, escreve 0 no símbolo b após o par.
