@@ -47,7 +47,7 @@ Descrição dos argumentos:
 		                       Sexta linha   : Deve conter a configuração inicial da fita;
 		                       A paritr da sétima linha deve ser escrita a tabela de transições.
 		                       
-	<QUANTIDADE_DE_FITAS>    : quantidade de fitas a serem utilizadas. É opicional. Caso omitido, a quantidade
+	<QUANTIDADE_DE_FITAS>    : quantidade de fitas a serem utilizadas. Caso omitido, a quantidade
 				   assumida é 1.
 
 A tabela de transições deve respeitar a seguinte forma:
@@ -75,41 +75,35 @@ de estados, as fitas com a posição atual na cor VERDE.
 
 ###Exemplo de Arquivo de Entrada
 
-O input a seguir faz a detecção de padrões dentro de uma única fita.
-A fita começa em @ e contém uma sequencia de H, M e b (símbolo branco).
-Caso encontre um H seguido de M ou o inverso, escreve 1 no símbolo b após o par.
-Caso encontre uma repetição de dois Hs ou dois Ms, escreve 0 no símbolo b após o par.
-No retorno, escreve 1 no símbolo b após o @ caso não forem encontradas repetições. Caso contrário escreve 0.
+O input a seguir faz a soma de dois números binários utilizando quatro fitas.
+As duas primeiras fitas são utilizadas para input, a terceira como auxiliar para o "vai um" e a última é utilizada para armazenar o resultado.
 
 ```
-	1 0 H M @ b
-	1 0 H M @ b
-	b q0
-	q0 q1 q2 q3 q4 q5 q6 q7 q8 q9 q10
-	q9
-	@ b H M b M H b H M b M M b
-	q0 @ q1 @ d
-	q1 b q2 b d
-	q2 H q3 H d
-	q2 M q4 M d
-	q4 H q6 H d
-	q6 b q2 1 d
-	q4 M q7 M d
-	q7 b q2 0 d
-	q3 H q5 H d
-	q5 b q2 0 d
-	q3 M q6 M d
-	q2 b q8 b e
-	q8 M q8 M e
-	q8 H q8 H e
-	q8 1 q8 1 e
-	q8 0 q10 0 e
-	q10 H q10 H e
-	q10 M q10 M e
-	q10 1 q10 1 e
-	q10 0 q10 0 e
-	q8 b q9 1 e
-	q10 b q9 0 e
+1 0 @ b
+1 0 @ b
+b q0
+q0 q1 q2 q3
+q3
+@ 1 1 1 1
+@ 0 0 0 1
+@
+@
+q0 @ @ @ @ q1 @ @ @ @ d d d d
+q1 1 1 b b q1 1 1 0 b d d d d
+q1 1 0 b b q1 1 0 0 b d d d d
+q1 0 1 b b q1 0 1 0 b d d d d
+q1 0 0 b b q1 0 0 0 b d d d d
+q1 b b b b q2 b b b b e e e e
+q2 1 1 0 b q2 1 1 1 0 e e p e
+q2 1 1 1 b q2 1 1 1 1 e e p e
+q2 0 0 0 b q2 0 0 0 0 e e e e
+q2 0 0 1 b q2 0 0 0 1 e e e e
+q2 1 0 0 b q2 1 0 0 1 e e e e
+q2 1 0 1 b q2 1 0 1 0 e e p e
+q2 0 1 0 b q2 0 1 0 1 e e e e
+q2 0 1 1 b q2 0 1 1 0 e e p e
+q2 @ @ 0 @ q3 @ @ 0 0 p p e p
+q2 @ @ 1 @ q3 @ @ 0 1 p p e p
 ```
 
 ##Diagrama do Projeto
