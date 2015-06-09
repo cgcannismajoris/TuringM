@@ -40,20 +40,13 @@ ALPHABET *alphabet_new(char* letters, uint32_t qtdLetters){
 	memcpy(novo->letters, letters, qtdLetters);
 
 	novo->qtd = qtdLetters;
-
+	
 	return (novo);
 }
 
 void alphabet_free(ALPHABET *alphabet){
-
-	//Apaga os valores da memória
-	memset(alphabet->letters, 0, alphabet->qtd);
-	alphabet->letters = 0;
-
-
 	free(alphabet->letters);
 	free(alphabet);
-	
 }
 
 int64_t alphabet_verif(ALPHABET *alphabet, char letter){

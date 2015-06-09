@@ -40,6 +40,9 @@ void table_free(TABLE *table){
 int table_addState(TABLE *table, STATE *state){
 
 	NODE *novo = NULL;
+	
+	if(state == NULL)
+		return (TABLE_ERROR);
 
 	if(table_getState(table, state_getName(state)) != NULL){
 		//Estado ja existe

@@ -53,9 +53,9 @@ void token_free(TOKENS *token)
 	uint8_t qtd;
 
     //Destrói as strings
-	for(qtd = 0; qtd < token->qtdMax; qtd++)
+	for(qtd = 0; qtd < token->qtdUsed; qtd++)
 	{
-		free(token->tokens[qtd]);
+		free((token->tokens)[qtd]);
 	}
 
 	free(token->tokens);

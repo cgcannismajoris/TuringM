@@ -40,10 +40,11 @@ STATE *state_new(char *name, int type){
 		return (NULL);
 	}
 
-	if((novo->name = (char*)malloc(strlen(name) + 1)) == NULL){
+	if((novo->name = (char*)malloc((sizeof(char) * strlen(name)) + 1)) == NULL){
+
+		trgError_setDesc(STATE_EALLOC_MSG);
 
 		free(novo);
-		trgError_setDesc(STATE_EALLOC_MSG);
 	
 		return (NULL);
 	}

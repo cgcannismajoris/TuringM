@@ -72,6 +72,7 @@ MACHINE *decoder_decode(char *filename, uint32_t qtdTapes){
 	token = decoder_getNextLineTokens(loader, &lineCounter);
 	
 	if(token_getQtd(token) != 2){
+		
 		decoder_setErrorInLine(lineCounter, DECODER_EUSER_FEWARGUMENTS_MSG);
 		
 		alphabet_free(inputAlphabet);
@@ -95,6 +96,8 @@ MACHINE *decoder_decode(char *filename, uint32_t qtdTapes){
 
 	//Obtém a lista de todos os estados
 	table = decoder_loadAllStates(loader, &lineCounter, token_getToken(token, 1));
+	
+	token_free(token);
 
 	if(table == NULL){
 		//O erro já foi setado em decoder_loadAllStates
@@ -106,10 +109,9 @@ MACHINE *decoder_decode(char *filename, uint32_t qtdTapes){
 
 		return (NULL);
 	}
-
+	
 	//Obtém o estado inicial das fitas
-	tapes = decoder_getTapes(loader, &lineCounter, qtdTapes, whiteChar);
-	if(tapes == NULL){
+	if((tapes = decoder_getTapes(loader, &lineCounter, qtdTapes, whiteChar)) == NULL){
 
 		alphabet_free(inputAlphabet);
 		alphabet_free(outputAlphabet);
@@ -126,17 +128,18 @@ MACHINE *decoder_decode(char *filename, uint32_t qtdTapes){
 
 		alphabet_free(inputAlphabet);
 		alphabet_free(outputAlphabet);
-		
+
 		for(qtdTapes; qtdTapes > 0; qtdTapes--){
 			tape_free(tapes[qtdTapes - 1]);
 		}
+
 		free(tapes);
-		
+
 		trgLoader_free(loader);
 		
 		return (NULL);
 	}
-
+	
 	machine = machine_new(inputAlphabet, outputAlphabet, whiteChar, table, tapes, qtdTapes);
 
 	return (machine);
@@ -152,10 +155,11 @@ TABLE *decoder_getTransitionTable(TRGLOADER *loader, uint64_t *lineCounter,
 	while((token = decoder_getNextLineTokens(loader, lineCounter)) != NULL){
 		
 		if(decoder_verifTransition(token, qtdTapes, table, inputAlphabet, 
-																outputAlphabet) != 0){
+									outputAlphabet) != DECODER_VERIFTRANSITION_PASS){
+
 			token_free(token);
 			decoder_setErrorInLine(*lineCounter, DECODER_EUSER_INVALIDTRANSITION_MSG);
-			table_free(table);
+			table_free(table); 
 			return (NULL);
 		}
 		
@@ -167,7 +171,7 @@ TABLE *decoder_getTransitionTable(TRGLOADER *loader, uint64_t *lineCounter,
 			table_free(table);
 			return (NULL);
 		}
-//		token_free(token);
+		token_free(token);
 	}
 
 	//Se não foram inseridas transições...	
@@ -226,14 +230,14 @@ TAPE **decoder_getTapes(TRGLOADER *loader, uint64_t *lineCounter, uint32_t qtdTa
 
 	TAPE **tapes;
 	TOKENS *token;
-	uint32_t counter;
+	int64_t counter;
 
-	if((tapes = (TAPE**)malloc(sizeof(TAPE*))) == NULL){
+	if((tapes = (TAPE**)malloc(sizeof(TAPE*) * qtdTapes)) == NULL){
 		return (NULL);
 	}
 
 	for(counter = 0; counter < qtdTapes; counter++){
-
+		
 		if((tapes[counter] = tape_new(whiteChar)) == NULL){
 			
 			for(counter - 1; counter > 0; counter--){
@@ -243,9 +247,9 @@ TAPE **decoder_getTapes(TRGLOADER *loader, uint64_t *lineCounter, uint32_t qtdTa
 
 			return (NULL);
 		}
+
 	
 		if((token = decoder_getNextLineTokens(loader, lineCounter)) == NULL){
-		
 			for(counter - 1; counter > 0; counter--){
 				tape_free(tapes[counter]);
 			}
@@ -277,13 +281,19 @@ TABLE *decoder_loadAllStates(TRGLOADER *loader, uint64_t *lineCounter, char *sta
 	token = decoder_getNextLineTokens(loader, lineCounter);
 
 	for(counter = 0; counter < token_getQtd(token); counter++){
-		table_addState(table, state_new(token_getToken(token, counter), 
-								STATE_TYPE_INTERMEDIARY));
+		if(table_addState(table, state_new(token_getToken(token, counter), 
+								STATE_TYPE_INTERMEDIARY)) == TABLE_ERROR){
+			table_free(table);
+			token_free(token);
+			return (NULL);
+		}
 	}
 
 	//Obtém e Seta os estados finais
 	table = decoder_getFinalStates(loader, lineCounter, table);
 	
+	token_free(token);
+
 	return (table);
 }
 
@@ -310,6 +320,8 @@ TABLE *decoder_getFinalStates(TRGLOADER *loader, uint64_t *lineCounter, TABLE *t
 
 		state_setType(state, STATE_TYPE_FINAL);
 	}
+	
+	token_free(token);
 
 	return (table);
 }
@@ -344,7 +356,7 @@ TOKENS *decoder_getNextLineTokens(TRGLOADER *loader, uint64_t *lineCounter){
 
 	line = trgLoader_getLine(loader);
 	
-	(*lineCounter)++;
+	(*lineCounter) += 1;
 	
 	if(line != NULL){
 		token = scanner_scan(line, NULL, DECODER_TOKEN_SEPARATOR, 0);
@@ -366,16 +378,20 @@ int decoder_verifTransition(TOKENS *tokens, uint32_t qtdTapes, TABLE *table,
 
 	uint32_t i;
 
-	if(token_getQtd(tokens) != (2 + 3 * qtdTapes)){ 
+	if(token_getQtd(tokens) != (2 + (3 * qtdTapes))){ 
 		return (DECODER_VERIFTRANSITION_ERROR_INVALIDQTD);
 	}
 	
+	//O i <= qtdTapes é devido a maneira como o cálculo é realizado
+	//ex: temos 4 fitas, logo 14 argumentos (2 para estados + 8 para lidos e escritos
+	//+ 4 para movimentos). No pior caso acessaremos a posição (4 + (2 * 4) + 1) = 13,
+	//que é a última posição do vetor de tokens;
 	for(i = 1; i <= qtdTapes; i++){
 		//Verifica se os simbolos e movimentos possuem apenas um caractere
 		if(strlen(token_getToken(tokens, i)) != 1 ||
 		   strlen(token_getToken(tokens, i + qtdTapes + 1)) != 1 ||
 		   strlen(token_getToken(tokens, i + (2 * qtdTapes) + 1)) != 1){
-	
+
 			return (DECODER_VERIFTRANSITION_ERROR_INVALIDARGUMENT);
 		}
 
