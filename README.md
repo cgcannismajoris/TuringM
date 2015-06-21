@@ -116,6 +116,8 @@ Obtemos a seguinte saída:
 
 ![Exemplo de Saída](https://github.com/cgcannismajoris/TuringM/blob/alternative/README_IMAGES/exemplo_de_saida.png) 
 
+É observável que a posição atual de cada uma das fitas é indicada pela cor verde.
+
 ##Diagrama do Projeto
 Abaixo é mostrado o diagrama de classes (adaptado) do projeto.
 
