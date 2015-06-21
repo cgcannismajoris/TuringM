@@ -73,7 +73,7 @@ A chamada do programa sem argumentos resultará na exibição de uma descrição
 Se a decodificação do arquivo for bem sucedida, o simulador irá iniciar a execução exibindo, a cada transição
 de estados, as fitas com a posição atual na cor VERDE.
 
-###Exemplo de Arquivo de Entrada
+###Exemplo de Execução
 
 O input a seguir faz a soma de dois números binários utilizando quatro fitas.
 As duas primeiras fitas são utilizadas para input, a terceira como auxiliar para o "vai um" e a última é utilizada para armazenar o resultado.
@@ -106,8 +106,20 @@ q2 @ @ 0 @ q3 @ @ 0 0 p p e p
 q2 @ @ 1 @ q3 @ @ 0 1 p p e p
 ```
 
+Ao invocarmos o programa com a seguinte linha de comando:
+
+```
+./TuringM input.txt 4
+```
+
+Obtemos a seguinte saída:
+
+[SAIDA]:https://github.com/cgcannismajoris/TuringM/blob/alternative/README_IMAGES/exemplo_de_saida.png "Exemplo de Saída"
+
 ##Diagrama do Projeto
 Abaixo é mostrado o diagrama de classes (adaptado) do projeto.
+
+[Diagrama]:https://github.com/cgcannismajoris/TuringM/blob/alternative/README_IMAGES/Diagrama%20-%20TuringM%20-%20N%20Fitas.png "Diagrama"
 
 ##Licença
 O TuringM é amparado pela licença [GNU General Public License V3.0](https://www.gnu.org/licenses/gpl.txt).
