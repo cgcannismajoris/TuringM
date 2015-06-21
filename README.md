@@ -114,12 +114,12 @@ Ao invocarmos o programa com a seguinte linha de comando:
 
 Obtemos a seguinte saída:
 
-[SAIDA]:https://github.com/cgcannismajoris/TuringM/blob/alternative/README_IMAGES/exemplo_de_saida.png "Exemplo de Saída"
+![Exemplo de Saída](https://github.com/cgcannismajoris/TuringM/blob/alternative/README_IMAGES/exemplo_de_saida.png) 
 
 ##Diagrama do Projeto
 Abaixo é mostrado o diagrama de classes (adaptado) do projeto.
 
-[Diagrama]:https://github.com/cgcannismajoris/TuringM/blob/alternative/README_IMAGES/Diagrama%20-%20TuringM%20-%20N%20Fitas.png "Diagrama"
+![Diagrama](https://github.com/cgcannismajoris/TuringM/blob/alternative/README_IMAGES/Diagrama%20-%20TuringM%20-%20N%20Fitas.png)
 
 ##Licença
 O TuringM é amparado pela licença [GNU General Public License V3.0](https://www.gnu.org/licenses/gpl.txt).
